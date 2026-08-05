@@ -1,18 +1,6 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-
-const boards = [
-  ["precision-desk", "精密作业台"],
-  ["editorial-intelligence", "编辑部研究桌"],
-  ["talent-constellation", "人才星图"],
-  ["calm-focus", "静谧焦点"],
-  ["command-center", "招聘指挥中心"],
-  ["human-studio", "人本关系所"],
-  ["bauhaus-workflow", "包豪斯流程系统"],
-  ["data-atelier", "数据裁缝"],
-  ["kinetic-blueprint", "动态蓝图"],
-  ["adaptive-modules", "自适应模块台"],
-];
+import { boards } from "../src/data/boards.js";
 
 const views = [
   ["index.html", "main", "主要风格"],
@@ -38,7 +26,7 @@ const shell = ({ board = "", view = "catalog", title = "Hunter SaaS Moodboards" 
 
 writeFileSync("index.html", shell({}));
 
-for (const [slug, name] of boards) {
+for (const { slug, name } of boards) {
   for (const [file, view, label] of views) {
     const target = `boards/${slug}/${file}`;
     mkdirSync(dirname(target), { recursive: true });

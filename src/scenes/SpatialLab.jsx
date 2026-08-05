@@ -3,6 +3,7 @@ import { Canvas, useFrame } from "@react-three/fiber";
 import { Box, ChevronLeft, ChevronRight, Maximize2, MousePointer2, Rotate3D } from "lucide-react";
 import { useMemo, useRef, useState } from "react";
 import * as THREE from "three";
+import { referenceScenes, referenceSpatialCopy, referenceSpatialDetail, referenceSpatialTitles } from "./ReferenceScenes";
 
 export function SpatialLab({ board }) {
   const [mode, setMode] = useState("探索");
@@ -89,14 +90,18 @@ const scenes = {
   "data-atelier": AtelierScene,
   "kinetic-blueprint": BlueprintScene,
   "adaptive-modules": ModulesScene,
+  ...referenceScenes,
 };
 
 const spatialTitles = {
   "precision-desk": "精密组织格架", "editorial-intelligence": "空间档案柜", "talent-constellation": "人才关系宇宙", "calm-focus": "判断路径庭院", "command-center": "自动化管线网络", "human-studio": "人物关系桥梁", "bauhaus-workflow": "几何招聘机器", "data-atelier": "人才价值仪器", "kinetic-blueprint": "线框组织城市", "adaptive-modules": "可组合工作流",
+  ...referenceSpatialTitles,
 };
 const spatialCopy = {
   "precision-desk": "规则轨道表达稳定、高效、可预测的批量处理。", "editorial-intelligence": "档案在空间中保留章节、证据和阅读顺序。", "talent-constellation": "镜头本身就是关系探索和筛选工具。", "calm-focus": "空间只留下当前决定所需的对象与路径。", "command-center": "任务在管线中流动，异常沿路径被快速定位。", "human-studio": "几何不再代表抽象节点，而是可到达的人际路径。", "bauhaus-workflow": "颜色、形状和方向共同编码业务状态。", "data-atelier": "材质、刻度和地形表达稀缺人才的相对价值。", "kinetic-blueprint": "二维策略可以进入三维剖面，检查路径与依赖。", "adaptive-modules": "模块像实体积木一样组合，并在设备间重新编排。",
+  ...referenceSpatialCopy,
 };
 const spatialDetail = {
   "precision-desk": "适合组织结构、人才批次和流水线状态的概览。", "editorial-intelligence": "适合论文、专利、公司档案与证据材料的空间浏览。", "talent-constellation": "适合人物、组织、岗位、论文之间的复杂关系探索。", "calm-focus": "适合关键判断和少量高价值对象的沉浸审查。", "command-center": "适合观察跨平台任务、队列、瓶颈和异常恢复。", "human-studio": "适合展示引荐路径、合作历史和信任证据。", "bauhaus-workflow": "适合把抽象招聘流程变成高辨识度的功能模块。", "data-atelier": "适合人才比较、稀缺度和顾问判断的空间表达。", "kinetic-blueprint": "适合 Mapping、搜索计划和 Agent 任务依赖。", "adaptive-modules": "适合用户自定义任务台和自动化流程装配。",
+  ...referenceSpatialDetail,
 };

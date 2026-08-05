@@ -4,6 +4,8 @@ import { PNG } from "pngjs";
 const boards = [
   "precision-desk", "editorial-intelligence", "talent-constellation", "calm-focus", "command-center",
   "human-studio", "bauhaus-workflow", "data-atelier", "kinetic-blueprint", "adaptive-modules",
+  "kinetic-ledger", "physical-telemetry", "institutional-trust", "ai-state-atlas", "expedition-search",
+  "compile-workshop", "guided-service", "teamwork-fabric", "pattern-library", "digital-curatorial",
 ];
 const views = ["", "components.html", "motion.html", "spatial.html"];
 const viewports = {
@@ -31,6 +33,7 @@ for (const [device, viewport] of Object.entries(viewports)) {
         if (!view) {
           await expect(page.locator(".mood")).toBeVisible();
           if (device === "desktop") await page.screenshot({ path: `screenshots/${board}-main-desktop.png`, fullPage: true });
+          if (device === "iphone") await page.screenshot({ path: `screenshots/${board}-main-iphone.png`, fullPage: true });
         }
         if (view === "components.html") {
           await expect(page.locator(".component-section")).toHaveCount(5);
@@ -63,9 +66,9 @@ for (const [device, viewport] of Object.entries(viewports)) {
 
 test("catalog navigation and filter", async ({ page }) => {
   await page.goto("");
-  await expect(page.locator(".catalog-card")).toHaveCount(10);
+  await expect(page.locator(".catalog-card")).toHaveCount(20);
   await page.locator(".catalog-search input").fill("关系");
-  await expect(page.locator(".catalog-card")).toHaveCount(2);
+  expect(await page.locator(".catalog-card").count()).toBeGreaterThanOrEqual(2);
   await page.locator(".catalog-search input").fill("");
   await page.locator(".catalog-card").first().getByRole("link", { name: "组件" }).click();
   await expect(page.locator(".component-lab")).toBeVisible();
@@ -94,4 +97,26 @@ test("motion controls create visible state changes", async ({ page }) => {
   await expect(page.locator(".motion-toast")).toBeVisible();
   await page.getByRole("button", { name: "打开命令面板" }).click();
   await expect(page.locator(".command-pop")).toBeVisible();
+});
+
+test("reference moodboards preserve their own interaction models", async ({ page }) => {
+  await page.goto(route("kinetic-ledger", ""));
+  await page.locator(".ledger-actions .primary").click();
+  await expect(page.locator(".ledger-status h1")).toHaveText("已确认");
+
+  await page.goto(route("ai-state-atlas", ""));
+  await page.getByRole("button", { name: /行动结论/ }).click();
+  await expect(page.locator(".atlas-report h1")).toContainText("行动结论");
+
+  await page.goto(route("guided-service", ""));
+  await page.getByRole("button", { name: /确认并继续/ }).click();
+  await expect(page.locator(".guide-stage h1")).toHaveText("查看候选结果");
+
+  await page.goto(route("pattern-library", ""));
+  await page.locator(".library-wall > div > button").nth(1).click();
+  await expect(page.locator(".library-inspector h1")).toHaveText("周雨澄");
+
+  await page.goto(route("digital-curatorial", ""));
+  await page.locator(".gallery-catalog button").nth(1).click();
+  await expect(page.locator(".gallery-exhibit h1")).toHaveText("具身智能人才图");
 });

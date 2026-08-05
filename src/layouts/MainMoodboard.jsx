@@ -6,6 +6,7 @@ import {
 } from "lucide-react";
 import { useState } from "react";
 import { candidates, events, workflow } from "../data/boards";
+import { referenceLayouts } from "./ReferenceMoodboards";
 
 const IconButton = ({ icon: Icon, label, active = false }) => (
   <button className={`icon-button ${active ? "active" : ""}`} title={label} aria-label={label}><Icon size={17} /></button>
@@ -27,6 +28,7 @@ export function MainMoodboard({ board }) {
     "data-atelier": DataAtelier,
     "kinetic-blueprint": KineticBlueprint,
     "adaptive-modules": AdaptiveModules,
+    ...referenceLayouts,
   };
   const Layout = layouts[board.slug];
   return <Layout />;

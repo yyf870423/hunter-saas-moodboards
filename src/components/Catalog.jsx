@@ -22,10 +22,10 @@ export function Catalog() {
       <header className="catalog-intro">
         <div>
           <span className="catalog-kicker">HUNTER SAAS · UX DIRECTION STUDY</span>
-          <h1>十种真正不同的<br />招聘智能工作方式</h1>
+          <h1>二十种真正不同的<br />招聘智能工作方式</h1>
         </div>
         <div className="catalog-summary">
-          <p>每套方向分别定义信息架构、视觉语言、组件系统、动效节奏和 3D 空间隐喻，不是同一套后台模板的换色版本。</p>
+          <p>前十套从 Hunter 任务出发原创探索，后十套从真实优秀网站提炼可迁移原则；每套都重新定义信息架构、视觉语言、动效和 3D 隐喻。</p>
           <label className="catalog-search">
             <Search size={17} aria-hidden="true" />
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索风格、能力或关键词" />

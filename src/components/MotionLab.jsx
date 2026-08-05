@@ -16,6 +16,16 @@ const motionProfiles = {
   atelier: { duration: 0.7, ease: [0.22, 1, 0.36, 1] },
   draw: { duration: 0.48, ease: "easeInOut" },
   layout: { type: "spring", stiffness: 260, damping: 28 },
+  ledger: { duration: 0.14, ease: [0.16, 1, 0.3, 1] },
+  telemetry: { duration: 0.2, ease: "linear" },
+  audit: { duration: 0.28, ease: [0.2, 0.8, 0.2, 1] },
+  atlas: { duration: 0.46, ease: [0.22, 1, 0.36, 1] },
+  route: { duration: 0.58, ease: "easeInOut" },
+  compile: { duration: 0.24, ease: [0.7, 0, 0.3, 1] },
+  guide: { duration: 0.4, ease: [0.22, 1, 0.36, 1] },
+  fabric: { type: "spring", stiffness: 190, damping: 25 },
+  browser: { duration: 0.2, ease: [0.2, 0.8, 0.2, 1] },
+  gallery: { duration: 0.64, ease: [0.22, 1, 0.36, 1] },
 };
 
 const Demo = ({ id, title, description, children }) => <article className="motion-demo" data-demo={id}><header><span>{id}</span><div><h2>{title}</h2><p>{description}</p></div></header><div className="motion-stage">{children}</div></article>;
