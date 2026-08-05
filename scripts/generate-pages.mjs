@@ -1,4 +1,4 @@
-import { mkdirSync, writeFileSync } from "node:fs";
+import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { boards } from "../src/data/boards.js";
 
@@ -6,7 +6,6 @@ const views = [
   ["index.html", "main", "主要风格"],
   ["components.html", "components", "组件"],
   ["motion.html", "motion", "动效"],
-  ["spatial.html", "spatial", "3D 空间"],
 ];
 
 const shell = ({ board = "", view = "catalog", title = "Hunter SaaS Moodboards" }) => `<!doctype html>
@@ -27,6 +26,7 @@ const shell = ({ board = "", view = "catalog", title = "Hunter SaaS Moodboards" 
 writeFileSync("index.html", shell({}));
 
 for (const { slug, name } of boards) {
+  rmSync(`boards/${slug}`, { recursive: true, force: true });
   for (const [file, view, label] of views) {
     const target = `boards/${slug}/${file}`;
     mkdirSync(dirname(target), { recursive: true });

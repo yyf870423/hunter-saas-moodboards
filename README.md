@@ -1,13 +1,12 @@
 # Hunter SaaS Moodboards
 
-Hunter SaaS 的视觉、交互、动效与 3D 方向研究。当前包含 20 套方向：前 10 套从产品任务出发原创探索，后 10 套从真实优秀网站中提炼可迁移原则。每套均有四个独立页面：
+Hunter SaaS 的科技猎头视觉与交互方向研究，共包含 20 套结构明显不同的 Moodboard。每套方案都有一个独立的工作模型，并提供三个页面：
 
-- 主要风格：验证信息架构和首屏工作方式。
-- 组件系统：覆盖输入、选择、导航、表格、实体、反馈和全部状态。
-- 动效实验：覆盖十二类业务动效，并支持减少动态效果偏好。
-- 3D 空间：十个独立 WebGL 场景，支持旋转、缩放和巡航。
+- **主要风格：** 用真实 Hunter 业务展示页面布局、信息层级和核心工作方式。
+- **组件系统：** 展示该概念专属的按钮、输入、选择、状态、业务条目和浮层结构。
+- **动效语言：** 展示四种与该概念和业务动作对应的独立动效。
 
-第二轮参考 Landing Love、Landbook、Awwwards、One Page Love、Lapa Ninja、Aceternity UI、21st.dev 与 SiteInspire，只借鉴设计原则，不复制页面、代码或品牌资产。
+本轮已移除 3D 页面。科技感由专业信息结构、二维数据表达、组件造型、材质和业务动效建立，不依赖装饰性三维场景。
 
 ## 本地运行
 
@@ -16,20 +15,25 @@ npm install
 npm run dev
 ```
 
+本地地址：`http://127.0.0.1:4173/hunter-saas-moodboards/`
+
 ## 构建与测试
 
 ```bash
 npm run build
 npm run test:e2e
+npm run capture:previews
+npm run capture:review
 ```
 
-本地地址：`http://127.0.0.1:4173/hunter-saas-moodboards/`
+Playwright 覆盖 20 套方案的主要风格页、组件页和动效页，并分别验证桌面、iPad 和 iPhone，共 180 个响应式页面组合；其余用例验证首页、方案独立结构、动效触发和废弃路由。
 
 ## 工程边界
 
-- 使用薄 HTML 页面入口、共享 React 组件、共享 token 和独立布局组件。
+- 使用薄 HTML 入口、共享设计 token、按方案分发的独立 React 布局与组件。
+- 20 套组件页和动效页不共享同一个可见 DOM 模板。
+- 首页缩略图由真实主页面自动截图生成，避免预览与内容不一致。
 - 不包含 Hunter 业务源码、用户数据、凭据或内部 API。
 - GitHub Actions 自动构建并发布到 GitHub Pages。
-- Playwright 覆盖桌面、iPad、iPhone 和 Canvas 像素验收。
 
-方案说明见 [首轮十套 Moodboard 方案](docs/十套Moodboard方案.md) 与 [真实案例参考十套追加方案](docs/真实案例参考十套追加方案.md)。
+详细方案见 [二十套科技猎头 Moodboard 重设计方案](docs/二十套科技猎头Moodboard重设计方案.md)。

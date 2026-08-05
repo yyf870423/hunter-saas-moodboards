@@ -7,22 +7,19 @@
     "generate": "node scripts/generate-pages.mjs",
     "dev": "npm run generate && vite --host 127.0.0.1",
     "build": "npm run generate && vite build",
+    "capture:previews": "node scripts/capture-previews.mjs",
+    "capture:review": "node scripts/capture-review.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test:e2e": "playwright test"
   },
   "dependencies": {
-    "@react-three/drei": "^10.7.6",
-    "@react-three/fiber": "^9.3.0",
     "lucide-react": "^0.468.0",
-    "motion": "^12.23.12",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1",
-    "three": "^0.179.1"
+    "react-dom": "^19.1.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.55.0",
     "@vitejs/plugin-react": "^5.0.2",
-    "pngjs": "^7.0.0",
     "vite": "^7.1.3"
   }
 }

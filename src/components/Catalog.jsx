@@ -1,4 +1,4 @@
-import { ArrowUpRight, Box, Component, GalleryVerticalEnd, Orbit, Search } from "lucide-react";
+import { ArrowUpRight, Component, GalleryVerticalEnd, Orbit, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { boards } from "../data/boards";
 
@@ -6,7 +6,6 @@ const views = [
   ["", "主要风格", GalleryVerticalEnd],
   ["components.html", "组件", Component],
   ["motion.html", "动效", Orbit],
-  ["spatial.html", "3D", Box],
 ];
 
 export function Catalog() {
@@ -25,7 +24,7 @@ export function Catalog() {
           <h1>二十种真正不同的<br />招聘智能工作方式</h1>
         </div>
         <div className="catalog-summary">
-          <p>前十套从 Hunter 任务出发原创探索，后十套从真实优秀网站提炼可迁移原则；每套都重新定义信息架构、视觉语言、动效和 3D 隐喻。</p>
+          <p>二十套方案分别用不同的科技隐喻重构招聘工作；每套都有专属的信息架构、组件语言和动效机制。</p>
           <label className="catalog-search">
             <Search size={17} aria-hidden="true" />
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索风格、能力或关键词" />
@@ -40,10 +39,10 @@ export function Catalog() {
             key={board.slug}
             style={{ "--card-accent": board.accent, "--card-signal": board.signal, "--card-canvas": board.canvas, "--card-ink": board.ink }}
           >
-            <div className="catalog-visual" aria-hidden="true">
+            <a className="catalog-visual" href={`${import.meta.env.BASE_URL}boards/${board.slug}/`} aria-label={`预览${board.name}`}>
+              <img src={`${import.meta.env.BASE_URL}previews/${board.slug}.png`} alt="" />
               <span className="visual-number">{board.id}</span>
-              <div className="visual-composition"><i /><i /><i /><i /><i /></div>
-            </div>
+            </a>
             <div className="catalog-card-copy">
               <div className="catalog-card-title">
                 <div><h2>{board.name}</h2><p>{board.en}</p></div>

@@ -6,7 +6,6 @@ import { BoardHeader } from "./components/BoardHeader";
 const MainMoodboard = lazy(() => import("./layouts/MainMoodboard").then((module) => ({ default: module.MainMoodboard })));
 const ComponentLab = lazy(() => import("./components/ComponentLab").then((module) => ({ default: module.ComponentLab })));
 const MotionLab = lazy(() => import("./components/MotionLab").then((module) => ({ default: module.MotionLab })));
-const SpatialLab = lazy(() => import("./scenes/SpatialLab").then((module) => ({ default: module.SpatialLab })));
 
 export function App() {
   const slug = document.body.dataset.board;
@@ -37,7 +36,6 @@ export function App() {
           {view === "main" && <MainMoodboard board={board} />}
           {view === "components" && <ComponentLab board={board} />}
           {view === "motion" && <MotionLab board={board} />}
-          {view === "spatial" && <SpatialLab board={board} />}
         </Suspense>
       </main>
     </div>
