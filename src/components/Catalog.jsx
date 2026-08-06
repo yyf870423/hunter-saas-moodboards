@@ -20,10 +20,10 @@ export function Catalog() {
       <header className="catalog-intro">
         <div>
           <span className="catalog-kicker">HUNTER SAAS · DESIGN DIRECTION STUDY</span>
-          <h1>二十套可落地的<br />科技猎头产品语言</h1>
+          <h1>十套差异明确的<br />科技猎头产品语言</h1>
         </div>
         <div className="catalog-summary">
-          <p>以专业猎头工作为主体，叠加克制的智能感与品牌气质。每套方案都有独立的 Dashboard 布局、全量组件语言和业务动效。</p>
+          <p>以专业猎头工作为主体，叠加克制的智能感与品牌气质。每套方案都有独立的 Dashboard DOM、组件结构、交互状态和业务动效。</p>
           <label className="catalog-search">
             <Search size={17} aria-hidden="true" />
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索风格、能力或关键词" />

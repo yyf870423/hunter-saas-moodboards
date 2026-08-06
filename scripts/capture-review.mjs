@@ -5,10 +5,8 @@ import { join } from "node:path";
 const baseUrl = process.env.REVIEW_BASE_URL || "http://127.0.0.1:4173/hunter-saas-moodboards/";
 const output = process.env.REVIEW_OUTPUT || "/tmp/hunter-moodboard-review";
 const boards = [
-  "precision-desk", "editorial-intelligence", "talent-constellation", "calm-focus", "command-center",
-  "human-studio", "bauhaus-workflow", "data-atelier", "kinetic-blueprint", "adaptive-modules",
-  "kinetic-ledger", "physical-telemetry", "institutional-trust", "ai-state-atlas", "expedition-search",
-  "compile-workshop", "guided-service", "teamwork-fabric", "pattern-library", "digital-curatorial",
+  "precision-desk", "command-center", "human-studio", "kinetic-blueprint", "physical-telemetry",
+  "institutional-trust", "expedition-search", "guided-service", "teamwork-fabric", "pattern-library",
 ];
 
 await rm(output, { recursive: true, force: true });

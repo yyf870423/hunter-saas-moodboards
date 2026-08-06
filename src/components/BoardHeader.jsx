@@ -14,9 +14,9 @@ function boardHref(slug, view) {
 export function BoardHeader({ board, view }) {
   return (
     <header className="board-header">
-      <a className="catalog-back" href={import.meta.env.BASE_URL} title="返回二十套方案">
+      <a className="catalog-back" href={import.meta.env.BASE_URL} title="返回十套方案">
         <ArrowLeft size={16} aria-hidden="true" />
-        <span>二十套方案</span>
+        <span>十套方案</span>
       </a>
       <div className="board-identity">
         <span className="board-index">{board.id}</span>

@@ -23,9 +23,9 @@ const shell = ({ board = "", view = "catalog", title = "Hunter SaaS Moodboards" 
 `;
 
 writeFileSync("index.html", shell({}));
+rmSync("boards", { recursive: true, force: true });
 
 for (const { slug, name } of boards) {
-  rmSync(`boards/${slug}`, { recursive: true, force: true });
   for (const [file, view, label] of views) {
     const target = `boards/${slug}/${file}`;
     mkdirSync(dirname(target), { recursive: true });

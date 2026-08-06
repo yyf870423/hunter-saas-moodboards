@@ -1,10 +1,11 @@
 import { chromium } from "@playwright/test";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, rmSync } from "node:fs";
 import { boards } from "../src/data/boards.js";
 
 const baseUrl = process.env.MOODBOARD_BASE_URL || "http://127.0.0.1:4173/hunter-saas-moodboards";
 const browser = await chromium.launch();
 const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 1 });
+rmSync("public/previews", { recursive: true, force: true });
 mkdirSync("public/previews", { recursive: true });
 
 for (const board of boards) {
