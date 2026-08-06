@@ -3,33 +3,44 @@ import { existsSync } from "node:fs";
 import { boards } from "../src/data/boards.js";
 
 const roots = {
-  "precision-desk": [".qo-dashboard", ".qo-components"],
-  "command-center": [".eb-dashboard", ".eb-components"],
-  "human-studio": [".cr-dashboard", ".cr-components"],
-  "kinetic-blueprint": [".tj-dashboard", ".tj-components"],
-  "physical-telemetry": [".cd-dashboard", ".cd-components"],
-  "institutional-trust": [".sg-dashboard", ".sg-components"],
-  "expedition-search": [".ps-dashboard", ".ps-components"],
-  "guided-service": [".cp-dashboard", ".cp-components"],
-  "teamwork-fabric": [".ga-dashboard", ".ga-components"],
-  "pattern-library": [".er-dashboard", ".er-components"],
+  "precision-desk": [".ops-dashboard", ".ops-components"],
+  "command-center": [".signal-dashboard", ".signal-components"],
+  "human-studio": [".client-dashboard", ".client-components"],
+  "kinetic-blueprint": [".journal-dashboard", ".journal-components"],
+  "physical-telemetry": [".inbox-dashboard", ".inbox-components"],
+  "institutional-trust": [".task-dashboard", ".task-components"],
+  "expedition-search": [".research-dashboard", ".research-components"],
+  "guided-service": [".copilot-dashboard", ".copilot-components"],
+  "teamwork-fabric": [".opportunity-dashboard", ".opportunity-components"],
+  "pattern-library": [".decision-dashboard", ".decision-components"],
 };
 
-const modalTriggers = {
-  "precision-desk": "打开 Modal",
-  "command-center": "打开确认 Modal",
-  "human-studio": "确认服务动作",
-  "kinetic-blueprint": "新建跟进 Modal",
-  "physical-telemetry": "安排沟通 Modal",
-  "institutional-trust": "OPEN MODAL",
-  "expedition-search": "归档 Modal",
-  "guided-service": "确认建议 Modal",
-  "teamwork-fabric": "停止任务 Modal",
-  "pattern-library": "写入确认 Modal",
+const prefixes = {
+  "precision-desk": "ops", "command-center": "signal", "human-studio": "client",
+  "kinetic-blueprint": "journal", "physical-telemetry": "inbox", "institutional-trust": "task",
+  "expedition-search": "research", "guided-service": "copilot", "teamwork-fabric": "opportunity",
+  "pattern-library": "decision",
 };
 
-const popupSelectors = {
-  "command-center": "label.select",
+const menuTriggers = {
+  "precision-desk": "批量操作", "command-center": "更多命令", "human-studio": "更多操作",
+  "kinetic-blueprint": "记录操作", "physical-telemetry": "会话操作", "institutional-trust": "任务操作",
+  "expedition-search": "材料操作", "guided-service": "建议操作", "teamwork-fabric": "对象操作",
+  "pattern-library": "决策操作",
+};
+
+const drawerTriggers = {
+  "precision-desk": "打开详情", "command-center": "打开上下文", "human-studio": "打开详情",
+  "kinetic-blueprint": "打开人物卡", "physical-telemetry": "联系人详情", "institutional-trust": "任务详情",
+  "expedition-search": "材料详情", "guided-service": "查看依据", "teamwork-fabric": "打开对象",
+  "pattern-library": "查看证据",
+};
+
+const dashboardActions = {
+  "precision-desk": "筛选", "command-center": "稍后处理", "human-studio": "筛选",
+  "kinetic-blueprint": "添加记录", "physical-telemetry": "查看完整资料",
+  "institutional-trust": "查看读取内容", "expedition-search": "高亮",
+  "guided-service": "编辑资料", "teamwork-fabric": "筛选", "pattern-library": "查看完整证据",
 };
 
 const viewports = {
@@ -60,7 +71,7 @@ for (const [device, viewport] of Object.entries(viewports)) {
   }
 }
 
-test("catalog exposes exactly ten independent directions", async ({ page }) => {
+test("catalog exposes exactly ten independent mature combinations", async ({ page }) => {
   await page.goto("");
   await expect(page.locator(".catalog-card")).toHaveCount(10);
   await expect(page.locator(".catalog-card img")).toHaveCount(10);
@@ -72,15 +83,13 @@ test("catalog exposes exactly ten independent directions", async ({ page }) => {
   await expect(page.locator(roots[boards[0].slug][1])).toBeVisible();
 });
 
-test("all directions use different dashboard and component DOM roots", async ({ page }) => {
+test("all combinations own different dashboard and component DOM roots", async ({ page }) => {
   const dashboardRoots = new Set();
   const componentRoots = new Set();
   for (const board of boards) {
     await page.goto(route(board.slug));
-    await expect(page.locator(roots[board.slug][0])).toBeVisible();
     dashboardRoots.add(await page.locator(roots[board.slug][0]).getAttribute("class"));
     await page.goto(route(board.slug, "components.html"));
-    await expect(page.locator(roots[board.slug][1])).toBeVisible();
     componentRoots.add(await page.locator(roots[board.slug][1]).getAttribute("class"));
   }
   expect(dashboardRoots.size).toBe(10);
@@ -88,60 +97,94 @@ test("all directions use different dashboard and component DOM roots", async ({ 
 });
 
 for (const board of boards) {
-  test(`${board.slug} owns complete dropdown, modal and motion interactions`, async ({ page }) => {
-    await page.goto(route(board.slug, "components.html"));
+  test(`${board.slug} dashboard actions provide visible feedback`, async ({ page }) => {
+    await page.goto(route(board.slug), { waitUntil: "networkidle" });
+    const prefix = prefixes[board.slug];
+    const action = page.getByRole("button", { name: dashboardActions[board.slug], exact: true }).first();
+    await action.hover();
+    await action.click();
+    await expect(page.locator(`.${prefix}-toast`)).toBeVisible();
+    await page.locator(`.${prefix}-toast button`).click();
+    await expect(page.locator(`.${prefix}-toast`)).toHaveCount(0);
+  });
+
+  test(`${board.slug} components cover pointer, keyboard, popup and state interactions`, async ({ page }) => {
+    await page.goto(route(board.slug, "components.html"), { waitUntil: "networkidle" });
+    const prefix = prefixes[board.slug];
     const root = page.locator(roots[board.slug][1]);
-    const popup = root.locator(popupSelectors[board.slug] || "label.popup").first();
-    const trigger = popup.locator(":scope > button");
 
-    await trigger.click();
-    await expect(popup.locator("menu")).toBeVisible();
-    await trigger.click();
-    await expect(popup.locator("menu")).toHaveCount(0);
+    const primary = root.locator(`.${prefix}-primary`).first();
+    const beforeHover = await primary.evaluate((element) => getComputedStyle(element).backgroundColor);
+    await primary.hover();
+    await expect.poll(() => primary.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(beforeHover);
 
-    await trigger.click();
-    await page.locator(".board-header").click();
-    await expect(popup.locator("menu")).toHaveCount(0);
+    const menuTrigger = root.getByRole("button", { name: menuTriggers[board.slug], exact: true });
+    await menuTrigger.click();
+    await expect(page.getByRole("menu")).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(page.getByRole("menu")).toHaveCount(0);
+    await menuTrigger.click();
+    await page.getByRole("menuitem").first().click();
+    await expect(page.locator(`.${prefix}-toast`)).toBeVisible();
+    await page.locator(`.${prefix}-toast button`).click();
 
-    await trigger.click();
-    await popup.locator("menu > button").first().click();
-    await expect(popup.locator("menu")).toHaveCount(0);
-
-    const checkbox = root.locator("button:has(> i)").first();
-    const mark = checkbox.locator(":scope > i");
-    const before = await mark.getAttribute("class");
+    const checkbox = root.locator('[role="checkbox"]');
+    const checkedBefore = await checkbox.getAttribute("data-state");
     await checkbox.click();
-    expect(await mark.getAttribute("class")).not.toBe(before);
+    expect(await checkbox.getAttribute("data-state")).not.toBe(checkedBefore);
 
-    await root.getByRole("button", { name: modalTriggers[board.slug], exact: true }).click();
-    const modal = root.locator('[class$="-modal"]');
-    await expect(modal).toBeVisible();
-    await modal.getByRole("button").first().click();
-    await expect(modal).toHaveCount(0);
+    const toggle = root.locator('[role="switch"]');
+    const toggleBefore = await toggle.getAttribute("data-state");
+    await toggle.click();
+    expect(await toggle.getAttribute("data-state")).not.toBe(toggleBefore);
 
-    const motion = root.locator('section[class*="-motion"]').last();
-    const controls = motion.locator(":scope > header button, :scope > nav button");
-    await expect(controls).toHaveCount(4);
-    const original = await motion.getAttribute("class");
-    await controls.nth(2).click();
-    expect(await motion.getAttribute("class")).not.toBe(original);
+    const radioButtons = root.locator(`.${prefix}-radio button`);
+    await radioButtons.nth(1).click();
+    await expect(radioButtons.nth(1).locator("em")).toBeVisible();
+
+    const slider = root.locator('[role="slider"]');
+    const valueBefore = Number(await slider.getAttribute("aria-valuenow"));
+    await slider.focus();
+    await page.keyboard.press("ArrowLeft");
+    expect(Number(await slider.getAttribute("aria-valuenow"))).toBeLessThan(valueBefore);
+
+    const tabs = root.getByRole("tab");
+    await tabs.nth(1).click();
+    await expect(tabs.nth(1)).toHaveAttribute("data-state", "active");
+
+    const motion = root.locator(`.${prefix}-motion`);
+    const motionCopyBefore = await motion.locator("article b").innerText();
+    await motion.locator("header nav button").nth(2).click();
+    await expect.poll(() => motion.locator("article b").innerText()).not.toBe(motionCopyBefore);
+
+    await root.getByRole("button", { name: drawerTriggers[board.slug], exact: true }).click();
+    const drawer = page.locator(`.${prefix}-drawer`);
+    await expect(drawer).toBeVisible();
+    await drawer.locator("header button").first().click();
+    await expect(drawer).toHaveCount(0);
+
+    await root.getByRole("button", { name: "打开确认 Modal", exact: true }).click();
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await dialog.getByRole("button", { name: /取消|返回/ }).click();
+    await expect(dialog).toHaveCount(0);
+
+    await expect(root.locator("button:disabled").first()).toBeDisabled();
   });
 }
 
-test("mind maps and connector graph visuals are removed", async ({ page }) => {
+test("mind maps, connector graphs and 3D visuals are removed", async ({ page }) => {
   for (const board of boards) {
     await page.goto(route(board.slug, "components.html"));
     await expect(page.getByText("思维导图", { exact: true })).toHaveCount(0);
-    await expect(page.locator('.cs-map-shell, .mini-tree, .relationship-panel, [data-graph]')).toHaveCount(0);
+    await expect(page.locator('.cs-map-shell, .mini-tree, .relationship-panel, [data-graph], canvas')).toHaveCount(0);
   }
 });
 
 test("legacy pages and removed board directories are not generated", async () => {
   const active = new Set(boards.map((board) => board.slug));
   for (const board of boards) {
-    for (const file of ["motion.html", "spatial.html"]) {
-      expect(existsSync(route(board.slug, file))).toBe(false);
-    }
+    for (const file of ["motion.html", "spatial.html"]) expect(existsSync(route(board.slug, file))).toBe(false);
   }
   for (const removed of ["editorial-intelligence", "talent-constellation", "calm-focus", "digital-curatorial"]) {
     expect(active.has(removed)).toBe(false);

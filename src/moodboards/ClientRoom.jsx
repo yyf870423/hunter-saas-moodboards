@@ -1,13 +1,99 @@
-import { Bell, Building2, CalendarDays, Check, ChevronDown, Clock3, Download, LockKeyhole, MessageSquareText, Plus, Search, Send, Sparkles, Trash2, Upload, UserRound, X } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { Checkbox, Dialog, DropdownMenu, Popover, Slider, Switch, Tabs } from "radix-ui";
+import {
+  ArrowUpRight, Building2, CalendarDays, Check, ChevronDown, CircleAlert,
+  ClipboardCheck, Clock3, Download, FileText, Filter, LoaderCircle, Mail,
+  MoreHorizontal, Plus, Search, Send, Upload, UserPlus, UsersRound, X,
+} from "lucide-react";
 import { candidates, jobs } from "../data/boards";
 
-export function ClientRoomDashboard(){return <div className="cr-dashboard"><aside><b>Hunter</b><small>PRIVATE CLIENT ROOM</small><nav><button className="active">客户概览</button><button>委托岗位</button><button>人才进展</button><button>沟通记录</button></nav><footer><span>于</span><p>于一凡<small>高级顾问</small></p></footer></aside><main><header><div><small>重点客户 / 01</small><h1>穹境机器人</h1><p>具身智能团队扩张期 · 本周需确认 4 位候选人</p></div><button>安排客户沟通</button></header><section className="cr-commitments"><article><small>本周承诺</small><b>推荐 6 位</b><span>已完成 4 位</span><i><em/></i></article><article><small>进行中岗位</small><b>3</b><span>其中 1 个紧急</span></article><article><small>客户满意度</small><b>9.2</b><span>最近 90 天</span></article></section><div className="cr-work"><section><header><h2>重点人才</h2><button>查看全部</button></header>{candidates.map(c=><article key={c.name}><i>{c.initials}</i><div><b>{c.name}</b><small>{c.role}</small></div><em>{c.stage}</em><strong>{c.score}</strong></article>)}</section><aside><header><h2>最近承诺</h2></header>{[["今天","确认林昊到岗周期"],["明天","提交岗位周报"],["周五","补充 3 位候选人"]].map(x=><article key={x[1]}><time>{x[0]}</time><p>{x[1]}</p></article>)}</aside></div></main></div>}
+export function ClientRoomDashboard() {
+  const [view, setView] = useState("客户组合");
+  const [client, setClient] = useState(0);
+  const [toast, setToast] = useState("");
+  const clients = [
+    { name: "智元新创", owner: "周宁", roles: 6, progress: 18, health: "合作稳定", note: "本周需完成算法负责人 shortlist" },
+    { name: "穹境机器人", owner: "林曦", roles: 4, progress: 11, health: "需要关注", note: "两位候选人等待客户反馈" },
+    { name: "逐光科技", owner: "陈航", roles: 3, progress: 9, health: "合作稳定", note: "感知专家进入终面" },
+  ];
+  const current = clients[client];
 
-export function ClientRoomComponents(){const root=useRef(null);const [open,setOpen]=useState(null);const [service,setService]=useState("正常推进");const [regions,setRegions]=useState(["北京"]);const [checks,setChecks]=useState([true,true,false]);const [radio,setRadio]=useState(1);const [toggle,setToggle]=useState(false);const [score,setScore]=useState(80);const [tab,setTab]=useState(0);const [modal,setModal]=useState(false);const [drawer,setDrawer]=useState(false);const [toast,setToast]=useState(false);const [upload,setUpload]=useState(false);const [motion,setMotion]=useState(0);useEffect(()=>{const fn=e=>{if(!root.current?.contains(e.target))setOpen(null)};document.addEventListener("pointerdown",fn);return()=>document.removeEventListener("pointerdown",fn)},[]);return <div className="cr-components" ref={root}><header><div><small>CLIENT EXPERIENCE SYSTEM</small><h1>客户会客厅组件</h1><p>深色框架承载品牌重量，浅色内容区保持长时间工作的清晰度。</p></div><button><Bell/>3 项承诺待处理</button></header>
- <nav className="cr-tabs">{["客户服务","人才交付","沟通记录","状态反馈"].map((x,i)=><button className={tab===i?"active":""} onClick={()=>setTab(i)} key={x}>{x}</button>)}</nav>
- <section className="cr-command"><aside><span>快速操作</span><button className="primary"><Plus/>新建客户委托</button><button><CalendarDays/>安排会议</button><button><Download/>导出服务报告</button><button className="danger"><Trash2/>删除记录</button><button disabled><LockKeyhole/>权限不足</button></aside><div className="cr-form"><h2>客户资料表单</h2><label><span>搜索</span><div><Search/><input defaultValue="穹境机器人"/></div></label><label><span>客户联系人</span><input defaultValue="王蕾"/></label><label className="popup"><span>服务状态</span><button onClick={()=>setOpen(open==="service"?null:"service")}>{service}<ChevronDown/></button>{open==="service"&&<menu>{["正常推进","需要关注","等待客户","已交付"].map(x=><button onClick={()=>{setService(x);setOpen(null)}} key={x}>{x===service&&<Check/>}{x}</button>)}</menu>}</label><label className="popup"><span>服务地区</span><button onClick={()=>setOpen(open==="region"?null:"region")}><span>{regions.join("、")||"请选择"}</span><ChevronDown/></button>{open==="region"&&<menu className="multi">{["北京","上海","深圳","新加坡"].map(x=><button onClick={()=>setRegions(regions.includes(x)?regions.filter(y=>y!==x):[...regions,x])} key={x}><i className={regions.includes(x)?"on":""}>{regions.includes(x)&&<Check/>}</i>{x}</button>)}<footer><button onClick={()=>setRegions([])}>清空</button><button onClick={()=>setOpen(null)}>完成</button></footer></menu>}</label><label className="popup wide"><span>服务周期</span><button onClick={()=>setOpen(open==="date"?null:"date")}><CalendarDays/>2026-07-01 至 2026-08-06</button>{open==="date"&&<div className="cr-date"><header><b>选择服务周期</b><button onClick={()=>setOpen(null)}><X/></button></header><div>{Array.from({length:21},(_,i)=><button className={i>6&&i<14?"range":""} key={i}>{i+1}</button>)}</div><button onClick={()=>setOpen(null)}>确认日期</button></div>}</label><label className="wide"><span>客户承诺</span><textarea defaultValue="本周推荐 6 位满足岗位层级与真机部署要求的候选人。"/></label><label className="wide"><span>材料上传</span><button className="cr-upload" onClick={()=>setUpload(!upload)}><Upload/><div><b>{upload?"客户资料正在整理":"上传客户材料"}</b><small>{upload?"68% · 可取消":"PDF、DOCX，最大 20 MB"}</small></div>{upload&&<X/>}</button></label></div></section>
- <section className="cr-preferences"><article><h3>信息范围</h3>{["仅看重点客户","包含历史委托","隐藏已关闭岗位"].map((x,i)=><button onClick={()=>setChecks(checks.map((v,n)=>n===i?!v:v))} key={x}><i className={checks[i]?"on":""}>{checks[i]&&<Check/>}</i>{x}</button>)}</article><article><h3>优先顺序</h3>{["客户紧急度","承诺时间","人才质量"].map((x,i)=><button onClick={()=>setRadio(i)} key={x}><i className={radio===i?"on":""}/>{x}</button>)}</article><article><h3>自动服务</h3><button onClick={()=>setToggle(!toggle)}><span>低风险结果自动确认<small>强制门禁不会关闭</small></span><i className={toggle?"on":""}><em/></i></button><label>最低匹配分 <b>{score}</b><input type="range" value={score} onChange={e=>setScore(e.target.value)}/></label></article></section>
- <section className="cr-portfolio"><header><div><small>CLIENT PORTFOLIO</small><h2>委托与人才</h2></div><label><Search/><input placeholder="搜索岗位或候选人"/></label></header><div className="cr-job-grid">{jobs.map((j,i)=><article key={j.title}><span>0{i+1}</span><h3>{j.title}</h3><p>{j.active} 位候选人 · 完成 {j.progress}%</p><i><em style={{width:`${j.progress}%`}}/></i><footer><button>查看岗位</button><button>服务详情</button></footer></article>)}</div><table><thead><tr><th>候选人</th><th>岗位</th><th>当前流程</th><th>匹配</th></tr></thead><tbody>{candidates.map(c=><tr key={c.name}><td><b>{c.name}</b><small>{c.role}</small></td><td>具身智能算法负责人</td><td>{c.stage}</td><td>{c.score}</td></tr>)}</tbody></table><footer><button onClick={()=>setModal(true)}>确认服务动作</button><button onClick={()=>setDrawer(true)}>打开客户侧栏</button><button onClick={()=>setToast(true)}>显示通知</button></footer></section>
- <section className={`cr-motion motion-${motion}`}><header><h2>会客厅专属动效</h2><nav>{["帘幕揭示","承诺聚焦","档案叠放","服务确认"].map((x,i)=><button onClick={()=>setMotion(i+1)} className={motion===i+1?"active":""} key={x}>{x}</button>)}</nav></header><div><article><small>PRIVATE CLIENT</small><h3>穹境机器人</h3><p>本周承诺完成度 67%</p></article><aside><Clock3/><b>下一项承诺</b><span>今天 16:30 前确认候选人名单</span></aside><strong>CONFIRMED</strong></div></section>
- {modal&&<div className="cr-overlay"><div className="cr-modal"><small>服务确认</small><h2>提交本周候选人名单？</h2><p>客户将收到 4 位候选人的推荐摘要。</p><footer><button onClick={()=>setModal(false)}>返回检查</button><button onClick={()=>{setModal(false);setToast(true)}}>确认提交</button></footer></div></div>}{drawer&&<aside className="cr-drawer"><header><span>穹</span><div><small>重点客户</small><h2>穹境机器人</h2></div><button onClick={()=>setDrawer(false)}><X/></button></header><dl><div><dt>进行中岗位</dt><dd>3</dd></div><div><dt>关联候选人</dt><dd>42</dd></div></dl><button><MessageSquareText/>记录沟通</button></aside>}{toast&&<div className="cr-toast"><Check/><span><b>客户状态已更新</b><small>承诺记录已写入</small></span><button onClick={()=>setToast(false)}><X/></button></div>}</div>}
+  return (
+    <div className="client-dashboard">
+      <aside className="client-sidebar">
+        <div className="client-brand"><b>Hunter</b><span>Client Service</span></div>
+        <nav>{["客户组合", "服务承诺", "联系人", "交付记录"].map(item => <button key={item} className={view === item ? "is-active" : ""} onClick={() => { setView(item); setToast(`已切换到${item}`); }}>{item}</button>)}</nav>
+        <footer><i>于</i><span><b>于一凡</b><small>高级顾问</small></span></footer>
+      </aside>
+      <main className="client-main">
+        <header className="client-head"><div><small>客户服务 / {view}</small><h1>客户合作工作台</h1><p>清楚掌握承诺、推进状态和下一次关键沟通。</p></div><button onClick={() => setToast("新客户表单已打开")}><Plus />新建客户</button></header>
+
+        <section className="client-summary">
+          <article className="client-feature"><span>本周优先客户</span><h2>{current.name}</h2><p>{current.note}</p><footer><button onClick={() => setToast("已打开客户详情")}>打开客户详情<ArrowUpRight /></button><div><small>客户负责人</small><b>{current.owner}</b></div></footer></article>
+          <article><span>合作岗位</span><strong>{current.roles}</strong><small>2 个本周新增</small></article>
+          <article><span>流程中候选人</span><strong>{current.progress}</strong><small>5 人等待反馈</small></article>
+          <article><span>服务状态</span><em>{current.health}</em><small>最近更新 34 分钟前</small></article>
+        </section>
+
+        <div className="client-grid">
+          <section className="client-portfolio"><header><div><h2>客户组合</h2><span>9 家合作客户</span></div><button onClick={() => setToast("筛选器已打开")}><Filter />筛选</button></header>
+            {clients.map((item, index) => <button key={item.name} className={client === index ? "is-active" : ""} onClick={() => setClient(index)}><i><Building2 /></i><span><b>{item.name}</b><small>{item.roles} 个岗位 · {item.progress} 人流程中</small></span><em>{item.health}</em><ArrowUpRight /></button>)}
+          </section>
+          <section className="client-commitments"><header><h2>近期承诺</h2><button onClick={() => setToast("已进入全部承诺")}>查看全部</button></header>
+            {[["今天 16:00", "提交算法负责人候选人名单", "智元新创"], ["明天", "反馈两位终面候选人", "穹境机器人"], ["周五", "完成自动驾驶人才地图", "逐光科技"]].map(([time, title, company], index) => <button key={title} onClick={() => setToast(`已打开：${title}`)}><i className={index === 0 ? "is-urgent" : ""}><Clock3 /></i><span><small>{time} · {company}</small><b>{title}</b></span><ArrowUpRight /></button>)}
+          </section>
+          <section className="client-activity"><header><h2>最近交付</h2></header>{["推荐 3 位具身智能候选人", "更新智元新创人才地图", "完成岗位解析和关键词建议"].map((item, index) => <button key={item} onClick={() => setToast(`已打开交付：${item}`)}><Check /><span><b>{item}</b><small>{index + 1} 小时前</small></span></button>)}</section>
+        </div>
+      </main>
+      <AnimatePresence>{toast && <motion.div className="client-toast" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><Check /><span>{toast}</span><button onClick={() => setToast("")}><X /></button></motion.div>}</AnimatePresence>
+    </div>
+  );
+}
+
+export function ClientRoomComponents() {
+  const [toast, setToast] = useState("");
+  const [drawer, setDrawer] = useState(false);
+  const [checked, setChecked] = useState(true);
+  const [enabled, setEnabled] = useState(true);
+  const [loading, setLoading] = useState(false);
+  const [tab, setTab] = useState("合作岗位");
+  const [motionStep, setMotionStep] = useState(1);
+  const [tags, setTags] = useState(["具身智能", "A 轮"]);
+  const [contactMode, setContactMode] = useState("邮件");
+  const [priority, setPriority] = useState(85);
+  const notify = (message) => setToast(message);
+  const save = () => { setLoading(true); setTimeout(() => { setLoading(false); notify("客户资料已保存"); }, 700); };
+
+  return (
+    <div className="client-components">
+      <header><div><small>POLARIS × ATTIO × MERCURY</small><h1>客户服务组件</h1><p>商务表单、对象关系和清晰的服务动作。</p></div><button className="client-primary" onClick={save} disabled={loading}>{loading ? <LoaderCircle className="is-spin" /> : <Check />}{loading ? "保存中" : "保存资料"}</button></header>
+      <section className="client-actions"><button className="client-primary" onClick={() => notify("已创建客户")}><Plus />新建客户</button><button onClick={() => setDrawer(true)}><Building2 />打开详情</button><DropdownMenu.Root><DropdownMenu.Trigger asChild><button>更多操作<ChevronDown /></button></DropdownMenu.Trigger><DropdownMenu.Portal><DropdownMenu.Content className="client-menu"><DropdownMenu.Item onSelect={() => notify("已发送服务周报")}>发送服务周报</DropdownMenu.Item><DropdownMenu.Item onSelect={() => notify("已导出客户资料")}>导出客户资料</DropdownMenu.Item><DropdownMenu.Separator /><DropdownMenu.Item className="is-danger" onSelect={() => notify("客户已关闭")}>关闭客户</DropdownMenu.Item></DropdownMenu.Content></DropdownMenu.Portal></DropdownMenu.Root><button className="is-danger" onClick={() => notify("关闭合作需要确认")}>关闭合作</button><button disabled>不可编辑</button></section>
+
+      <div className="client-spec-grid">
+        <section className="client-form"><header><h2>客户资料</h2><span>基础信息</span></header><div>
+          <label><span>搜索客户</span><div className="client-input"><Search /><input placeholder="公司名称或联系人" /></div></label>
+          <label><span>公司名称</span><input defaultValue="智元新创" /></label>
+          <label className="is-error"><span>企业邮箱</span><input defaultValue="contact@" /><small><CircleAlert />请输入完整邮箱地址</small></label>
+          <label><span>合作阶段</span><DropdownMenu.Root><DropdownMenu.Trigger asChild><button className="client-select">正式合作<ChevronDown /></button></DropdownMenu.Trigger><DropdownMenu.Portal><DropdownMenu.Content className="client-menu">{["潜在客户", "洽谈中", "正式合作"].map(item => <DropdownMenu.Item key={item} onSelect={() => notify(`阶段：${item}`)}>{item}</DropdownMenu.Item>)}</DropdownMenu.Content></DropdownMenu.Portal></DropdownMenu.Root></label>
+          <label><span>下次回访</span><Popover.Root><Popover.Trigger asChild><button className="client-select"><CalendarDays />2026-08-10<ChevronDown /></button></Popover.Trigger><Popover.Portal><Popover.Content className="client-calendar"><b>安排回访</b>{["今天 16:00", "明天 10:00", "下周一 14:00"].map(item => <button key={item} onClick={() => notify(`回访时间：${item}`)}>{item}</button>)}</Popover.Content></Popover.Portal></Popover.Root></label>
+          <label><span>客户标签</span><div className="client-tags">{tags.map(tag => <em key={tag}>{tag}<button onClick={() => setTags(tags.filter(item => item !== tag))}><X /></button></em>)}<button onClick={() => setTags([...tags, "重点客户"])}><Plus />添加</button></div></label>
+          <label className="span-2"><span>服务备注</span><textarea defaultValue="客户重点关注具身智能算法和灵巧手结构方向。" /></label>
+          <label className="span-2"><span>合作材料</span><button className="client-upload" onClick={() => notify("已打开材料上传")}><Upload /><span><b>上传合同或需求文件</b><small>PDF、DOCX，最大 20 MB</small></span></button></label>
+        </div></section>
+
+        <aside className="client-preferences"><header><h2>服务偏好</h2></header><button className="client-check" onClick={() => setChecked(!checked)}><Checkbox.Root checked={checked} onCheckedChange={setChecked}><Checkbox.Indicator><Check /></Checkbox.Indicator></Checkbox.Root><span><b>周报中包含候选人进展</b><small>自动汇总流程变化</small></span></button><div className="client-switch"><span><b>重要节点提醒</b><small>面试和 Offer 节点即时提醒</small></span><Switch.Root checked={enabled} onCheckedChange={setEnabled}><Switch.Thumb /></Switch.Root></div><div className="client-radio"><span>联系偏好</span>{["邮件", "飞书"].map((item) => <button key={item} onClick={() => { setContactMode(item); notify(`联系偏好：${item}`); }}><i className={contactMode === item ? "is-active" : ""}>{contactMode === item && <em />}</i>{item}</button>)}</div><label className="client-slider"><span><b>服务优先级</b><strong>{priority}</strong></span><Slider.Root value={[priority]} onValueChange={([value]) => setPriority(value)}><Slider.Track><Slider.Range /></Slider.Track><Slider.Thumb aria-label="服务优先级" /></Slider.Root></label></aside>
+      </div>
+
+      <section className="client-data"><header><Tabs.Root value={tab} onValueChange={setTab}><Tabs.List>{["合作岗位", "候选人", "联系人"].map(item => <Tabs.Trigger value={item} key={item}>{item}</Tabs.Trigger>)}</Tabs.List></Tabs.Root><button onClick={() => notify("已下载当前视图")}><Download />导出</button></header><div className="client-table-head"><span>名称</span><span>负责人</span><span>状态</span><span>最新动作</span><span>操作</span></div>{jobs.map((job, index) => <div className="client-row" key={job.title}><span><i><BriefcaseIcon /></i><b>{job.title}<small>{job.company}</small></b></span><span>于一凡</span><em>{index === 0 ? "优先推进" : "正常"}</em><time>今天 {10 + index}:30</time><button onClick={() => setDrawer(true)}>查看</button></div>)}<footer><span>1–3 / 6</span><div><button disabled>上一页</button><button onClick={() => notify("已进入下一页")}>下一页</button></div></footer></section>
+
+      <section className="client-motion"><header><div><small>POLARIS RESOURCE FEEDBACK</small><h2>服务反馈</h2></div><nav>{["进入", "聚焦", "提醒", "交付"].map((item, index) => <button key={item} className={motionStep === index + 1 ? "is-active" : ""} onClick={() => setMotionStep(index + 1)}>{item}</button>)}</nav></header><div><motion.article key={motionStep} initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }}><i>{motionStep === 4 ? <Check /> : <Building2 />}</i><span><small>客户服务节点</small><b>{["", "新客户进入服务组合", "当前客户获得稳定焦点", "关键承诺到期前提醒", "周报已交付并留下记录"][motionStep]}</b></span><ArrowUpRight /></motion.article></div></section>
+
+      <Dialog.Root><Dialog.Trigger asChild><button className="client-modal-trigger">打开确认 Modal</button></Dialog.Trigger><Dialog.Portal><Dialog.Overlay className="client-overlay" /><Dialog.Content className="client-modal"><Dialog.Title>发送客户服务周报</Dialog.Title><Dialog.Description>周报包含 6 个岗位和 18 位候选人的最新进展。</Dialog.Description><div><Mail /><span><b>接收人：周宁</b><small>zhouning@example.com</small></span></div><footer><Dialog.Close asChild><button>取消</button></Dialog.Close><Dialog.Close asChild><button className="client-primary" onClick={() => notify("服务周报已发送")}><Send />确认发送</button></Dialog.Close></footer><Dialog.Close asChild><button className="client-close"><X /></button></Dialog.Close></Dialog.Content></Dialog.Portal></Dialog.Root>
+      <AnimatePresence>{drawer && <><motion.div className="client-drawer-mask" onClick={() => setDrawer(false)} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} /><motion.aside className="client-drawer" initial={{ x: "100%" }} animate={{ x: 0 }} exit={{ x: "100%" }}><header><div><small>客户详情</small><h2>智元新创</h2></div><button onClick={() => setDrawer(false)}><X /></button></header><p>重点招聘具身智能算法、灵巧手结构和机器人平台方向。</p><dl><div><dt>合作岗位</dt><dd>6</dd></div><div><dt>流程中候选人</dt><dd>18</dd></div><div><dt>负责人</dt><dd>周宁</dd></div></dl><button className="client-primary" onClick={() => notify("已打开完整客户详情")}>打开完整详情</button></motion.aside></>}</AnimatePresence>
+      <AnimatePresence>{toast && <motion.div className="client-toast" initial={{ opacity: 0, y: 14 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><Check /><span>{toast}</span><button onClick={() => setToast("")}><X /></button></motion.div>}</AnimatePresence>
+    </div>
+  );
+}
+
+function BriefcaseIcon() { return <FileText />; }

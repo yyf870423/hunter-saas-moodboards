@@ -1,0 +1,195 @@
+/* iPad: preserve each product's hierarchy while reducing parallel columns. */
+@media (max-width: 1120px) {
+  .ops-sidebar { width: 176px; }
+  .ops-dashboard { grid-template-columns: 176px minmax(0,1fr); }
+  .ops-workgrid { grid-template-columns: minmax(0,1fr) 260px; }
+  .ops-jobs { grid-column: 1 / -1; }
+
+  .signal-layout { grid-template-columns: minmax(0,1.35fr) minmax(280px,.65fr); }
+  .signal-pulse, .signal-agents { grid-column: auto; }
+
+  .client-dashboard { grid-template-columns: 190px minmax(0,1fr); }
+  .client-grid { grid-template-columns: minmax(0,1fr); }
+  .client-activity { grid-column: 1 / -1; }
+
+  .journal-layout { grid-template-columns: 220px minmax(0,1fr); }
+  .journal-followup { grid-column: 1 / -1; }
+
+  .inbox-dashboard { grid-template-columns: 56px 270px minmax(0,1fr); }
+  .inbox-context { display: none; }
+
+  .task-dashboard { grid-template-columns: 280px minmax(0,1fr); }
+  .task-output { grid-column: 1 / -1; min-height: auto; }
+
+  .research-main { grid-template-columns: 260px minmax(0,1fr); }
+  .research-insights { grid-column: 1 / -1; }
+
+  .copilot-dashboard { grid-template-columns: 220px minmax(0,1fr); }
+  .copilot-panel { grid-column: 1 / -1; }
+
+  .opportunity-dashboard { grid-template-columns: 170px minmax(0,1fr); }
+  .opportunity-grid { grid-template-columns: minmax(260px,.8fr) minmax(0,1.2fr); }
+  .opportunity-enrichment { grid-column: 1 / -1; }
+
+  .decision-main { grid-template-columns: 280px minmax(0,1fr); }
+  .decision-evidence { grid-column: 1 / -1; }
+
+  .ops-component-grid,.signal-spec-grid,.client-spec-grid,.journal-spec-grid,.inbox-spec-grid,.task-spec-grid,.research-spec-grid,.copilot-spec-grid,.opportunity-spec-grid,.decision-spec-grid {
+    grid-template-columns: minmax(0,1fr) 280px;
+  }
+}
+
+@media (max-width: 860px) {
+  :where(.ops-components,.signal-components,.client-components,.journal-components,.inbox-components,.task-components,.research-components,.copilot-components,.opportunity-components,.decision-components) {
+    padding: 24px 18px 60px;
+  }
+
+  :where(.ops-components,.signal-components,.client-components,.journal-components,.inbox-components,.task-components,.research-components,.copilot-components,.opportunity-components,.decision-components) > header {
+    align-items: flex-start;
+  }
+
+  .ops-component-grid,.signal-spec-grid,.client-spec-grid,.journal-spec-grid,.inbox-spec-grid,.task-spec-grid,.research-spec-grid,.copilot-spec-grid,.opportunity-spec-grid,.decision-spec-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .client-preferences { position: static; }
+
+  .ops-dashboard, .client-dashboard, .opportunity-dashboard { grid-template-columns: 1fr; }
+  .ops-sidebar, .client-sidebar, .opportunity-sidebar { width: auto; min-height: auto; position: static; display: flex; align-items: center; overflow-x: auto; }
+  .ops-sidebar nav, .client-sidebar nav, .opportunity-sidebar nav { display: flex; flex: 1; }
+  .ops-health, .client-sidebar > section, .opportunity-sidebar > section { display: none; }
+
+  .signal-topbar { grid-template-columns: auto minmax(0,1fr); }
+  .signal-topbar nav { overflow-x: auto; }
+  .signal-command { display: none; }
+  .signal-layout { grid-template-columns: 1fr; }
+
+  .journal-dashboard { grid-template-columns: 56px minmax(0,1fr); }
+  .journal-layout { grid-template-columns: 210px minmax(0,1fr); }
+
+  .inbox-dashboard { grid-template-columns: 56px 240px minmax(0,1fr); }
+
+  .task-dashboard { grid-template-columns: 240px minmax(0,1fr); }
+  .research-main { grid-template-columns: 230px minmax(0,1fr); }
+  .copilot-dashboard { grid-template-columns: 190px minmax(0,1fr); }
+
+  .decision-main { grid-template-columns: 230px minmax(0,1fr); }
+
+  :where(.ops-data-panel,.signal-data,.client-data,.journal-data,.inbox-data,.task-data,.research-data,.copilot-data,.opportunity-data,.decision-data) {
+    overflow-x: auto;
+  }
+  :where(.ops-data-panel .ops-table-head,.ops-data-row,.client-table-head,.client-row,.opportunity-table-head,.opportunity-data-row) { min-width: 760px; }
+  :where(.signal-data-row,.task-data-row,.research-data-row,.decision-data-row) { min-width: 680px; }
+}
+
+/* iPhone: prioritize one task at a time, retain horizontal table scrolling. */
+@media (max-width: 640px) {
+  :where(.ops-components,.signal-components,.client-components,.journal-components,.inbox-components,.task-components,.research-components,.copilot-components,.opportunity-components,.decision-components) {
+    padding: 18px 12px 54px;
+  }
+
+  :where(.ops-components,.signal-components,.client-components,.journal-components,.inbox-components,.task-components,.research-components,.copilot-components,.opportunity-components,.decision-components) > header {
+    display: grid;
+    gap: 16px;
+    padding: 16px;
+  }
+  :where(.ops-components,.signal-components,.client-components,.journal-components,.inbox-components,.task-components,.research-components,.copilot-components,.opportunity-components,.decision-components) > header h1 { font-size: 23px; }
+  :where(.ops-components,.signal-components,.client-components,.journal-components,.inbox-components,.task-components,.research-components,.copilot-components,.opportunity-components,.decision-components) > header > button { width: 100%; }
+
+  :where(.ops-actions,.signal-command-strip,.client-actions,.journal-actions,.inbox-actions,.task-actions,.research-actions,.copilot-actions,.opportunity-actions,.decision-actions) {
+    width: 100%;
+    justify-content: flex-start;
+    padding-bottom: 8px;
+  }
+
+  .ops-form-panel > div,.signal-form > div,.client-form > div,.journal-form > div,.inbox-form > div,.task-form > div,.research-form > div,.copilot-form > div,.opportunity-form > div,.decision-form > div,
+  .ops-fields {
+    grid-template-columns: 1fr;
+    padding: 15px;
+  }
+  :where(.span-2,.ops-span-2) { grid-column: auto; }
+
+  :where(.ops-motion,.signal-motion,.client-motion,.journal-motion,.inbox-motion,.task-motion,.research-motion,.copilot-motion,.opportunity-motion,.decision-motion) > header {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 14px;
+  }
+  :where(.ops-motion,.signal-motion,.client-motion,.journal-motion,.inbox-motion,.task-motion,.research-motion,.copilot-motion,.opportunity-motion,.decision-motion) header nav {
+    width: 100%;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+  :where(.ops-motion,.signal-motion,.client-motion,.journal-motion,.inbox-motion,.task-motion,.research-motion,.copilot-motion,.opportunity-motion,.decision-motion) article { align-items: flex-start; }
+
+  :where(.ops-modal,.signal-modal,.client-modal,.journal-modal,.inbox-modal,.task-modal,.research-modal,.copilot-modal,.opportunity-modal,.decision-modal) {
+    width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+    overflow-y: auto;
+    padding: 20px;
+  }
+
+  .ops-dashboard, .client-dashboard, .opportunity-dashboard { display: block; }
+  .ops-sidebar, .client-sidebar, .opportunity-sidebar { padding: 8px 10px; }
+  .ops-sidebar .ops-brand b, .client-brand b, .opportunity-sidebar > div b { display: none; }
+  .ops-sidebar nav button, .client-sidebar nav button, .opportunity-sidebar nav button { min-width: max-content; }
+
+  .ops-main, .client-main, .opportunity-main { padding: 18px 12px; }
+  .ops-page-head, .client-head, .opportunity-main > header { display: grid; }
+  .ops-metrics, .client-summary { grid-template-columns: repeat(2, minmax(0,1fr)); }
+  .ops-workgrid, .client-grid, .opportunity-grid { grid-template-columns: 1fr; }
+  .ops-detail, .client-activity, .opportunity-enrichment { display: none; }
+
+  .signal-topbar { padding: 8px 10px; overflow-x: auto; }
+  .signal-logo span, .signal-topbar nav { display: none; }
+  .signal-main { padding: 22px 12px; }
+  .signal-heading { display: grid; }
+  .signal-focus article { padding: 18px; }
+
+  .journal-dashboard { display: block; }
+  .journal-rail { position: static; height: 54px; width: 100%; display: flex; }
+  .journal-layout { grid-template-columns: 1fr; }
+  .journal-people { display: flex; overflow-x: auto; }
+  .journal-people > button { min-width: 190px; }
+  .journal-main { padding: 14px 10px; }
+
+  .inbox-dashboard { display: block; }
+  .inbox-appbar { height: 54px; display: flex; position: static; }
+  .inbox-list { max-height: 300px; overflow-y: auto; }
+  .inbox-conversation { min-height: 620px; }
+
+  .task-dashboard { display: block; }
+  .task-list { max-height: 290px; overflow-y: auto; }
+  .task-context { min-height: 620px; }
+  .task-output { display: none; }
+
+  .research-topbar { display: flex; overflow-x: auto; }
+  .research-topbar nav, .research-topbar label { display: none; }
+  .research-main { display: block; }
+  .research-library { max-height: 310px; overflow-y: auto; }
+  .research-reader { min-height: 600px; }
+  .research-insights { display: none; }
+
+  .copilot-dashboard { display: block; }
+  .copilot-sidebar { display: flex; overflow-x: auto; }
+  .copilot-sidebar > button { min-width: max-content; }
+  .copilot-main { padding: 18px 12px; }
+  .copilot-profile { grid-template-columns: 1fr; }
+  .copilot-panel { display: none; }
+
+  .opportunity-main > header label { width: 100%; }
+  .opportunity-detail { min-height: 500px; }
+  .opportunity-list { max-height: 300px; overflow-y: auto; }
+
+  .decision-main { display: block; }
+  .decision-topbar { overflow-x: auto; }
+  .decision-queue { max-height: 300px; overflow-y: auto; }
+  .decision-review { min-height: 600px; }
+  .decision-evidence { display: none; }
+
+  .copilot-data-row > div { grid-template-columns: 1fr; }
+  .copilot-data-row > div > svg { transform: rotate(90deg); justify-self: center; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .signal-motion > div::before { animation: none; }
+}
