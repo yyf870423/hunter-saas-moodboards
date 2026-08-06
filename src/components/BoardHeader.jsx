@@ -1,10 +1,9 @@
-import { ArrowLeft, Component, GalleryVerticalEnd, Orbit } from "lucide-react";
+import { ArrowLeft, Component, GalleryVerticalEnd } from "lucide-react";
 import { viewMeta } from "../data/boards";
 
 const icons = {
   main: GalleryVerticalEnd,
   components: Component,
-  motion: Orbit,
 };
 
 function boardHref(slug, view) {

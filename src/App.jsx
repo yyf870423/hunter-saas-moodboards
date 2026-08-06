@@ -5,7 +5,6 @@ import { BoardHeader } from "./components/BoardHeader";
 
 const MainMoodboard = lazy(() => import("./layouts/MainMoodboard").then((module) => ({ default: module.MainMoodboard })));
 const ComponentLab = lazy(() => import("./components/ComponentLab").then((module) => ({ default: module.ComponentLab })));
-const MotionLab = lazy(() => import("./components/MotionLab").then((module) => ({ default: module.MotionLab })));
 
 export function App() {
   const slug = document.body.dataset.board;
@@ -26,6 +25,7 @@ export function App() {
     "--muted": board.muted,
     "--radius": board.radius,
     "--theme-font": board.font,
+    "--display-font": board.displayFont,
   };
 
   return (
@@ -35,7 +35,6 @@ export function App() {
         <Suspense fallback={<div className="page-loading"><i /><span>正在载入设计方案</span></div>}>
           {view === "main" && <MainMoodboard board={board} />}
           {view === "components" && <ComponentLab board={board} />}
-          {view === "motion" && <MotionLab board={board} />}
         </Suspense>
       </main>
     </div>

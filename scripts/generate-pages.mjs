@@ -3,9 +3,8 @@ import { dirname } from "node:path";
 import { boards } from "../src/data/boards.js";
 
 const views = [
-  ["index.html", "main", "主要风格"],
-  ["components.html", "components", "组件"],
-  ["motion.html", "motion", "动效"],
+  ["index.html", "main", "Dashboard"],
+  ["components.html", "components", "组件与动效"],
 ];
 
 const shell = ({ board = "", view = "catalog", title = "Hunter SaaS Moodboards" }) => `<!doctype html>

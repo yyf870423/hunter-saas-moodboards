@@ -15,8 +15,9 @@ await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true });
 const profiles = [
-  { name: "desktop", viewport: { width: 1440, height: 900 }, views: ["components", "motion"], thumbHeight: 430 },
-  { name: "iphone", viewport: { width: 390, height: 844 }, views: ["main", "components", "motion"], thumbHeight: 620 },
+  { name: "desktop", viewport: { width: 1440, height: 900 }, views: ["main", "components"], thumbHeight: 430 },
+  { name: "ipad", viewport: { width: 834, height: 1194 }, views: ["main", "components"], thumbHeight: 520 },
+  { name: "iphone", viewport: { width: 390, height: 844 }, views: ["main", "components"], thumbHeight: 620 },
 ];
 
 for (const profile of profiles) {
@@ -35,7 +36,7 @@ for (const profile of profiles) {
       cards.push(`<figure><figcaption>${board}</figcaption><img src="data:image/png;base64,${png.toString("base64")}"></figure>`);
     }
     const contactPage = await browser.newPage({ viewport: { width: 1200, height: 900 }, deviceScaleFactor: 1 });
-    await contactPage.setContent(`<style>html{background:#111;color:#fff;font:12px Arial}body{margin:20px;display:grid;grid-template-columns:repeat(${profile.name === "iphone" ? 4 : 2},1fr);gap:16px}figure{margin:0;background:#222;padding:8px}figcaption{padding:3px 0 8px}img{display:block;width:100%;height:${profile.thumbHeight}px;object-fit:cover;object-position:top}</style>${cards.join("")}`);
+    await contactPage.setContent(`<style>html{background:#111;color:#fff;font:12px Arial}body{margin:20px;display:grid;grid-template-columns:repeat(${profile.name === "desktop" ? 2 : 4},1fr);gap:16px}figure{margin:0;background:#222;padding:8px}figcaption{padding:3px 0 8px}img{display:block;width:100%;height:${profile.thumbHeight}px;object-fit:cover;object-position:top}</style>${cards.join("")}`);
     await contactPage.screenshot({ path: join(output, `${profile.name}-${view}-contact-sheet.png`), fullPage: true });
     await contactPage.close();
   }

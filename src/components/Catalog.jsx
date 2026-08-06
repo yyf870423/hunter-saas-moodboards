@@ -1,11 +1,10 @@
-import { ArrowUpRight, Component, GalleryVerticalEnd, Orbit, Search } from "lucide-react";
+import { ArrowUpRight, Component, GalleryVerticalEnd, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { boards } from "../data/boards";
 
 const views = [
-  ["", "主要风格", GalleryVerticalEnd],
-  ["components.html", "组件", Component],
-  ["motion.html", "动效", Orbit],
+  ["", "Dashboard", GalleryVerticalEnd],
+  ["components.html", "组件与动效", Component],
 ];
 
 export function Catalog() {
@@ -20,11 +19,11 @@ export function Catalog() {
     <main className="catalog">
       <header className="catalog-intro">
         <div>
-          <span className="catalog-kicker">HUNTER SAAS · UX DIRECTION STUDY</span>
-          <h1>二十种真正不同的<br />招聘智能工作方式</h1>
+          <span className="catalog-kicker">HUNTER SAAS · DESIGN DIRECTION STUDY</span>
+          <h1>二十套可落地的<br />科技猎头产品语言</h1>
         </div>
         <div className="catalog-summary">
-          <p>二十套方案分别用不同的科技隐喻重构招聘工作；每套都有专属的信息架构、组件语言和动效机制。</p>
+          <p>以专业猎头工作为主体，叠加克制的智能感与品牌气质。每套方案都有独立的 Dashboard 布局、全量组件语言和业务动效。</p>
           <label className="catalog-search">
             <Search size={17} aria-hidden="true" />
             <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="搜索风格、能力或关键词" />
