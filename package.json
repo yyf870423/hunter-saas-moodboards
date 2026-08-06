@@ -9,6 +9,7 @@
     "build": "npm run generate && vite build",
     "capture:previews": "node scripts/capture-previews.mjs",
     "capture:review": "node scripts/capture-review.mjs",
+    "capture:overlays": "node scripts/capture-overlays.mjs",
     "preview": "vite preview --host 127.0.0.1",
     "test:e2e": "playwright test"
   },

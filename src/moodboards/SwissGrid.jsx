@@ -14,21 +14,18 @@ const tasks = [
 ];
 
 export function SwissGridDashboard() {
-  const [task, setTask] = useState(0);
   const [toast, setToast] = useState("");
-  const [message, setMessage] = useState("");
-  const [events, setEvents] = useState(["已读取公司官网与招聘页面", "正在核验团队与业务信息", "已生成公司资料草稿"]);
-  const current = tasks[task];
-
-  const send = () => { if (message.trim()) { setEvents([...events, `用户补充：${message.trim()}`]); setMessage(""); setToast("补充信息已交给 Agent"); } };
+  const [scope, setScope] = useState("进行中");
 
   return (
-    <div className="task-dashboard">
-      <aside className="task-list"><header><div><Bot /><b>Hunter Agent</b></div><button onClick={() => setToast("新任务入口已打开")}><Plus /></button></header><label><Search /><input placeholder="搜索任务" /></label><nav><button className="is-active" onClick={() => setToast("显示进行中任务")}>进行中 <span>2</span></button><button onClick={() => setToast("显示全部任务")}>全部</button></nav>{tasks.map((item, index) => <button key={item.title} className={task === index ? "is-active" : ""} onClick={() => setTask(index)}><i className={`status-${index}`} >{index === 0 ? <LoaderCircle className="is-spin" /> : index === 1 ? <CircleAlert /> : <Check />}</i><span><b>{item.title}</b><small>{item.type} · {item.time}</small></span></button>)}</aside>
-
-      <main className="task-context"><header><div><small>{current.type}</small><h1>{current.title}</h1></div><span className={`task-status status-${task}`}>{current.status}</span><button onClick={() => setToast("任务操作菜单已打开")}><MoreHorizontal /></button></header><section className="task-thread"><div className="task-request"><i>于</i><article><small>任务输入</small><p>请调研智元新创，重点关注公司业务、人才优势、核心团队和招聘方向。</p></article></div>{events.map((event, index) => <motion.div className="task-event" key={`${event}-${index}`} initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}><i>{index === events.length - 1 && task === 0 ? <LoaderCircle className="is-spin" /> : <Check />}</i><article><small>{index === events.length - 1 && task === 0 ? "正在处理" : "已完成"}</small><p>{event}</p>{index === 0 && <button onClick={() => setToast("已展开读取内容")}>查看读取内容<ArrowRight /></button>}</article></motion.div>)}</section><footer><textarea value={message} onChange={(event) => setMessage(event.target.value)} placeholder="补充信息或调整要求" onKeyDown={(event) => { if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); send(); } }} /><div><button onClick={() => setToast("已打开附件选择")}><Upload /></button><span>Agent 会在下一步读取补充内容</span><button className="task-send" onClick={send} disabled={!message.trim()}><Send /></button></div></footer></main>
-
-      <aside className="task-output"><header><div><small>交付结果</small><h2>公司资料草稿</h2></div><FileCheck2 /></header><section><span>状态</span><strong>已生成，可查看</strong><p>包含公司简介、融资情况、人才优势、面试流程、地点与业务等字段。</p><dl><div><dt>信息字段</dt><dd>12 项</dd></div><div><dt>证据来源</dt><dd>9 个</dd></div><div><dt>需要确认</dt><dd>3 项</dd></div></dl></section><button onClick={() => setToast("已打开公司草稿")}>查看公司草稿<ArrowRight /></button><div className="task-output-note"><CircleAlert /><span><b>需要人工确认</b><small>草稿不会直接写入公司资料</small></span></div></aside>
+    <div className="task-dashboard task-overview">
+      <aside className="task-overview-sidebar"><div><Bot /><b>Hunter Agent</b></div><nav>{["任务概览", "进行中", "需处理", "已完成"].map((item, index) => <button key={item} className={index === 0 ? "is-active" : ""} onClick={() => setToast(`已切换到${item}`)}>{item}</button>)}</nav><section><small>今日运行时间</small><strong>3.8 小时</strong><span>4 个任务并行</span></section><i>于</i></aside>
+      <main className="task-overview-main"><header><div><small>WORKBUDDY × VERCEL AI · AGENT TASKS</small><h1>Agent 任务概览</h1><p>查看任务状态、人工处理点和已交付业务结果。</p></div><label><Search /><input placeholder="搜索 Agent 任务" /></label><button onClick={() => setToast("新任务入口已打开")}><Plus />新建任务</button></header>
+        <section className="task-overview-metrics">{[["运行中", "4", "2 个预计今天完成"], ["需要处理", "3", "等待登录或确认"], ["今日完成", "11", "交付 9 项业务结果"], ["成功率", "94%", "过去 30 天"]].map(([label, value, note], index) => <article key={label} className={`tone-${index}`}><span>{label}</span><strong>{value}</strong><small>{note}</small></article>)}</section>
+        <div className="task-overview-grid"><section className="task-overview-runs"><header><div><h2>任务运行情况</h2><span>最近更新 1 分钟前</span></div><nav>{["进行中", "需处理", "已完成"].map(item => <button key={item} className={scope === item ? "is-active" : ""} onClick={() => setScope(item)}>{item}</button>)}</nav></header>{tasks.map((item, index) => <button key={item.title} onClick={() => setToast(`已打开任务：${item.title}`)}><i className={`status-${index}`}>{index === 0 ? <LoaderCircle className="is-spin" /> : index === 1 ? <CircleAlert /> : <Check />}</i><span><small>{item.type}</small><b>{item.title}</b><p>{["正在核验团队与招聘信息", "等待用户确认候选人建议", "已写入岗位解析结果"][index]}</p></span><em>{item.status}</em><time>{item.time}</time><ArrowRight /></button>)}</section>
+          <aside className="task-overview-delivery"><header><h2>今日交付</h2><span>9 项</span></header>{[["公司资料草稿", "3 份", FileCheck2], ["候选人补全建议", "18 条", Sparkles], ["岗位解析结果", "4 份", FileText]].map(([label, value, Icon]) => <button key={label} onClick={() => setToast(`已打开${label}`)}><i><Icon /></i><span><b>{label}</b><small>{value}</small></span><ArrowRight /></button>)}<section><CircleAlert /><span><b>3 个任务需要处理</b><small>处理后将从保留位置继续运行</small></span><button onClick={() => setToast("已打开需处理任务")}>立即处理</button></section></aside>
+        </div>
+      </main>
       <AnimatePresence>{toast && <motion.div className="task-toast" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><Check /><span>{toast}</span><button onClick={() => setToast("")}><X /></button></motion.div>}</AnimatePresence>
     </div>
   );

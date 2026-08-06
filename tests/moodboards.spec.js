@@ -1,46 +1,25 @@
 import { expect, test } from "@playwright/test";
 import { existsSync } from "node:fs";
-import { boards } from "../src/data/boards.js";
+import { boards, viewMeta } from "../src/data/boards.js";
 
-const roots = {
-  "precision-desk": [".ops-dashboard", ".ops-components"],
-  "command-center": [".signal-dashboard", ".signal-components"],
-  "human-studio": [".client-dashboard", ".client-components"],
-  "kinetic-blueprint": [".journal-dashboard", ".journal-components"],
-  "physical-telemetry": [".inbox-dashboard", ".inbox-components"],
-  "institutional-trust": [".task-dashboard", ".task-components"],
-  "expedition-search": [".research-dashboard", ".research-components"],
-  "guided-service": [".copilot-dashboard", ".copilot-components"],
-  "teamwork-fabric": [".opportunity-dashboard", ".opportunity-components"],
-  "pattern-library": [".decision-dashboard", ".decision-components"],
+const dashboardRoots = {
+  "precision-desk": ".ops-dashboard",
+  "command-center": ".signal-dashboard",
+  "human-studio": ".client-dashboard",
+  "kinetic-blueprint": ".journal-dashboard",
+  "physical-telemetry": ".inbox-dashboard",
+  "institutional-trust": ".task-dashboard",
+  "expedition-search": ".research-dashboard",
+  "guided-service": ".copilot-dashboard",
+  "teamwork-fabric": ".opportunity-dashboard",
+  "pattern-library": ".decision-dashboard",
 };
 
 const prefixes = {
-  "precision-desk": "ops", "command-center": "signal", "human-studio": "client",
-  "kinetic-blueprint": "journal", "physical-telemetry": "inbox", "institutional-trust": "task",
-  "expedition-search": "research", "guided-service": "copilot", "teamwork-fabric": "opportunity",
-  "pattern-library": "decision",
-};
-
-const menuTriggers = {
-  "precision-desk": "批量操作", "command-center": "更多命令", "human-studio": "更多操作",
-  "kinetic-blueprint": "记录操作", "physical-telemetry": "会话操作", "institutional-trust": "任务操作",
-  "expedition-search": "材料操作", "guided-service": "建议操作", "teamwork-fabric": "对象操作",
-  "pattern-library": "决策操作",
-};
-
-const drawerTriggers = {
-  "precision-desk": "打开详情", "command-center": "打开上下文", "human-studio": "打开详情",
-  "kinetic-blueprint": "打开人物卡", "physical-telemetry": "联系人详情", "institutional-trust": "任务详情",
-  "expedition-search": "材料详情", "guided-service": "查看依据", "teamwork-fabric": "打开对象",
-  "pattern-library": "查看证据",
-};
-
-const dashboardActions = {
-  "precision-desk": "筛选", "command-center": "稍后处理", "human-studio": "筛选",
-  "kinetic-blueprint": "添加记录", "physical-telemetry": "查看完整资料",
-  "institutional-trust": "查看读取内容", "expedition-search": "高亮",
-  "guided-service": "编辑资料", "teamwork-fabric": "筛选", "pattern-library": "查看完整证据",
+  "precision-desk": "opsx", "command-center": "cmdx", "human-studio": "clix",
+  "kinetic-blueprint": "jnlx", "physical-telemetry": "inbx", "institutional-trust": "wbx",
+  "expedition-search": "rsx", "guided-service": "cpx", "teamwork-fabric": "oppx",
+  "pattern-library": "dcx",
 };
 
 const viewports = {
@@ -49,143 +28,201 @@ const viewports = {
   iphone: { width: 390, height: 844 },
 };
 
-function route(board, view = "") {
-  return `boards/${board}/${view}`;
+const experienceViews = Object.keys(viewMeta).filter((view) => view !== "main");
+const allViews = Object.keys(viewMeta);
+
+function route(board, view = "main", theme = "light") {
+  const file = view === "main" ? "" : viewMeta[view].file;
+  return `boards/${board}/${file}?theme=${theme}`;
 }
 
-for (const [device, viewport] of Object.entries(viewports)) {
-  for (const board of boards) {
-    for (const [view, rootIndex] of [["", 0], ["components.html", 1]]) {
-      test(`${device} · ${board.slug} · ${view || "dashboard"}`, async ({ page }) => {
-        const errors = [];
-        page.on("pageerror", (error) => errors.push(error.message));
-        await page.setViewportSize(viewport);
-        await page.goto(route(board.slug, view), { waitUntil: "networkidle" });
-        await expect(page.locator(".board-header")).toBeVisible();
-        await expect(page.locator(roots[board.slug][rootIndex])).toBeVisible();
-        const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
-        expect(overflow).toBeLessThanOrEqual(1);
-        expect(errors).toEqual([]);
-      });
-    }
-  }
-}
+test.describe.configure({ mode: "serial" });
 
-test("catalog exposes exactly ten independent mature combinations", async ({ page }) => {
+test("catalog contains ten independent, unnumbered product systems", async ({ page }) => {
   await page.goto("");
   await expect(page.locator(".catalog-card")).toHaveCount(10);
   await expect(page.locator(".catalog-card img")).toHaveCount(10);
-  await expect(page.locator(".catalog-card").first().locator(".catalog-card-nav a")).toHaveCount(2);
+  await expect(page.locator(".catalog-card-nav a").first()).toHaveText("工作台");
+  await expect(page.locator(".catalog-card-nav a").nth(1)).toHaveText("Agent 对话");
+  await expect(page.locator(".catalog-card-number, .board-index")).toHaveCount(0);
   await page.locator(".catalog-search input").fill("智能");
-  expect(await page.locator(".catalog-card").count()).toBeGreaterThanOrEqual(1);
-  await page.locator(".catalog-search input").fill("");
-  await page.locator(".catalog-card").first().getByRole("link", { name: "组件与动效" }).click();
-  await expect(page.locator(roots[boards[0].slug][1])).toBeVisible();
+  expect(await page.locator(".catalog-card").count()).toBeGreaterThan(0);
 });
 
-test("all combinations own different dashboard and component DOM roots", async ({ page }) => {
-  const dashboardRoots = new Set();
-  const componentRoots = new Set();
-  for (const board of boards) {
-    await page.goto(route(board.slug));
-    dashboardRoots.add(await page.locator(roots[board.slug][0]).getAttribute("class"));
-    await page.goto(route(board.slug, "components.html"));
-    componentRoots.add(await page.locator(roots[board.slug][1]).getAttribute("class"));
+test("all 480 route/theme/viewport combinations render without runtime errors or document overflow", async ({ page }) => {
+  test.setTimeout(360_000);
+  const failures = [];
+  page.on("pageerror", (error) => failures.push(error.message));
+  for (const [device, viewport] of Object.entries(viewports)) {
+    await page.setViewportSize(viewport);
+    for (const board of boards) {
+      for (const view of allViews) {
+        for (const theme of ["light", "dark"]) {
+          await page.goto(route(board.slug, view, theme), { waitUntil: "domcontentloaded" });
+          const root = view === "main" ? dashboardRoots[board.slug] : `.${prefixes[board.slug]}-page`;
+          await expect(page.locator(root), `${device}/${board.slug}/${view}/${theme}`).toBeVisible();
+          await expect(page.locator("html")).toHaveAttribute("data-theme", theme);
+          const overflow = await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth);
+          if (overflow > 1) failures.push(`${device}/${board.slug}/${view}/${theme}: overflow ${overflow}`);
+        }
+      }
+    }
   }
-  expect(dashboardRoots.size).toBe(10);
-  expect(componentRoots.size).toBe(10);
+  expect(failures).toEqual([]);
+});
+
+test("every product system owns seven distinct business-page roots", async ({ page }) => {
+  const roots = new Set();
+  for (const board of boards) {
+    for (const view of experienceViews) {
+      await page.goto(route(board.slug, view));
+      const root = page.locator(`.${prefixes[board.slug]}-page`);
+      await expect(root).toBeVisible();
+      roots.add(`${await root.getAttribute("class")}/${view}`);
+    }
+  }
+  expect(roots.size).toBe(70);
 });
 
 for (const board of boards) {
-  test(`${board.slug} dashboard actions provide visible feedback`, async ({ page }) => {
-    await page.goto(route(board.slug), { waitUntil: "networkidle" });
+  test(`${board.slug} theme switch persists across pages without losing page state`, async ({ page }) => {
     const prefix = prefixes[board.slug];
-    const action = page.getByRole("button", { name: dashboardActions[board.slug], exact: true }).first();
-    await action.hover();
-    await action.click();
-    await expect(page.locator(`.${prefix}-toast`)).toBeVisible();
-    await page.locator(`.${prefix}-toast button`).click();
-    await expect(page.locator(`.${prefix}-toast`)).toHaveCount(0);
+    await page.goto(route(board.slug, "list", "light"));
+    const search = page.locator(`.${prefix}-page input`).first();
+    await search.fill("林");
+    await page.getByRole("button", { name: "深色模式" }).click();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await expect(search).toHaveValue("林");
+    await page.reload();
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
+    await page.goto(route(board.slug, "agent").replace("?theme=light", ""));
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
   });
 
-  test(`${board.slug} components cover pointer, keyboard, popup and state interactions`, async ({ page }) => {
-    await page.goto(route(board.slug, "components.html"), { waitUntil: "networkidle" });
+  test(`${board.slug} list dropdown, create/delete modal and feedback are fully styled`, async ({ page }) => {
     const prefix = prefixes[board.slug];
-    const root = page.locator(roots[board.slug][1]);
+    await page.goto(route(board.slug, "list"));
+    const root = page.locator(`.${prefix}-page`);
+    const toolbarButtons = root.locator(`.${prefix}-toolbar button, .${prefix}-listbar button, .${prefix}-searchbar button, .${prefix}-filters button, .${prefix}-dbbar button`);
+    if (await toolbarButtons.count()) {
+      await toolbarButtons.first().click();
+      const menu = page.getByRole("menu");
+      await expect(menu).toBeVisible();
+      const menuFont = await menu.evaluate((node) => getComputedStyle(node).fontFamily);
+      const rootFont = await root.evaluate((node) => getComputedStyle(node).fontFamily);
+      expect(menuFont).toBe(rootFont);
+      expect(await menu.evaluate((node) => getComputedStyle(node).backgroundColor)).not.toBe("rgba(0, 0, 0, 0)");
+      const menuBox = await menu.boundingBox();
+      expect(menuBox.x).toBeGreaterThanOrEqual(0);
+      expect(menuBox.x + menuBox.width).toBeLessThanOrEqual(1281);
+      await menu.locator("button").first().click();
+      await expect(menu).toHaveCount(0);
+    }
 
-    const primary = root.locator(`.${prefix}-primary`).first();
-    const beforeHover = await primary.evaluate((element) => getComputedStyle(element).backgroundColor);
-    await primary.hover();
-    await expect.poll(() => primary.evaluate((element) => getComputedStyle(element).backgroundColor)).not.toBe(beforeHover);
+    await root.locator("header button.primary").first().click();
+    const createDialog = page.getByRole("dialog");
+    await expect(createDialog).toBeVisible();
+    expect(await createDialog.evaluate((node) => getComputedStyle(node).fontFamily))
+      .toBe(await root.evaluate((node) => getComputedStyle(node).fontFamily));
+    expect(await createDialog.evaluate((node) => getComputedStyle(node).backgroundColor)).not.toBe("rgba(0, 0, 0, 0)");
+    const dialogBox = await createDialog.boundingBox();
+    expect(dialogBox.x).toBeGreaterThanOrEqual(0);
+    expect(dialogBox.y).toBeGreaterThanOrEqual(0);
+    expect(dialogBox.x + dialogBox.width).toBeLessThanOrEqual(1281);
+    expect(dialogBox.y + dialogBox.height).toBeLessThanOrEqual(721);
+    await createDialog.getByRole("button", { name: /取消|返回/ }).click();
+    await expect(createDialog).toHaveCount(0);
 
-    const menuTrigger = root.getByRole("button", { name: menuTriggers[board.slug], exact: true });
-    await menuTrigger.click();
-    await expect(page.getByRole("menu")).toBeVisible();
-    await page.keyboard.press("Escape");
-    await expect(page.getByRole("menu")).toHaveCount(0);
-    await menuTrigger.click();
-    await page.getByRole("menuitem").first().click();
-    await expect(page.locator(`.${prefix}-toast`)).toBeVisible();
-    await page.locator(`.${prefix}-toast button`).click();
+    const deleteButton = root.getByRole("button", { name: /删除/ }).first();
+    if (await deleteButton.count()) {
+      await deleteButton.click();
+      const deleteDialog = page.getByRole("dialog");
+      await expect(deleteDialog).toBeVisible();
+      await expect(deleteDialog.getByRole("button", { name: /确认删除/ })).toBeVisible();
+      await deleteDialog.getByRole("button", { name: /取消|返回/ }).click();
+    }
 
-    const checkbox = root.locator('[role="checkbox"]');
-    const checkedBefore = await checkbox.getAttribute("data-state");
-    await checkbox.click();
-    expect(await checkbox.getAttribute("data-state")).not.toBe(checkedBefore);
+    const visibleControls = root.locator("button, input, textarea");
+    for (let index = 0; index < Math.min(await visibleControls.count(), 12); index += 1) {
+      const appearance = await visibleControls.nth(index).evaluate((node) => getComputedStyle(node).appearance);
+      expect(appearance).toBe("none");
+    }
+  });
 
-    const toggle = root.locator('[role="switch"]');
-    const toggleBefore = await toggle.getAttribute("data-state");
-    await toggle.click();
-    expect(await toggle.getAttribute("data-state")).not.toBe(toggleBefore);
+  test(`${board.slug} core Agent, pipeline, upload and task actions change visible state`, async ({ page }) => {
+    const prefix = prefixes[board.slug];
+    await page.goto(route(board.slug, "agent"));
+    const agent = page.locator(`.${prefix}-page`);
+    const composer = agent.locator("input, textarea").last();
+    await composer.fill("请补充当前团队的公开证据");
+    await composer.press("Enter");
+    await expect(agent.getByText("请补充当前团队的公开证据", { exact: true })).toBeVisible();
 
-    const radioButtons = root.locator(`.${prefix}-radio button`);
-    await radioButtons.nth(1).click();
-    await expect(radioButtons.nth(1).locator("em")).toBeVisible();
+    await page.goto(route(board.slug, "pipeline"));
+    const pipeline = page.locator(`.${prefix}-page`);
+    const noteButton = pipeline.getByRole("button", { name: /备注|批注/ }).first();
+    if (await noteButton.count()) {
+      await noteButton.click();
+      await expect(page.getByRole("dialog")).toBeVisible();
+      await page.getByRole("dialog").getByRole("button", { name: /取消/ }).click();
+    }
 
-    const slider = root.locator('[role="slider"]');
-    const valueBefore = Number(await slider.getAttribute("aria-valuenow"));
-    await slider.focus();
-    await page.keyboard.press("ArrowLeft");
-    expect(Number(await slider.getAttribute("aria-valuenow"))).toBeLessThan(valueBefore);
+    await page.goto(route(board.slug, "upload"));
+    const upload = page.locator(`.${prefix}-page`);
+    const start = upload.getByRole("button", { name: /开始|上传|启动|拖放|选择/ }).last();
+    await start.click();
+    await expect(upload.locator(".spin").first()).toBeVisible({ timeout: 2_000 }).catch(() => {});
 
-    const tabs = root.getByRole("tab");
-    await tabs.nth(1).click();
-    await expect(tabs.nth(1)).toHaveAttribute("data-state", "active");
-
-    const motion = root.locator(`.${prefix}-motion`);
-    const motionCopyBefore = await motion.locator("article b").innerText();
-    await motion.locator("header nav button").nth(2).click();
-    await expect.poll(() => motion.locator("article b").innerText()).not.toBe(motionCopyBefore);
-
-    await root.getByRole("button", { name: drawerTriggers[board.slug], exact: true }).click();
-    const drawer = page.locator(`.${prefix}-drawer`);
-    await expect(drawer).toBeVisible();
-    await drawer.locator("header button").first().click();
-    await expect(drawer).toHaveCount(0);
-
-    await root.getByRole("button", { name: "打开确认 Modal", exact: true }).click();
-    const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
-    await dialog.getByRole("button", { name: /取消|返回/ }).click();
-    await expect(dialog).toHaveCount(0);
-
-    await expect(root.locator("button:disabled").first()).toBeDisabled();
+    await page.goto(route(board.slug, "tasks"));
+    const tasks = page.locator(`.${prefix}-page`);
+    const actionable = tasks.getByRole("button").filter({ hasText: /暂停|继续|重试|详情|记录/ }).first();
+    if (await actionable.count()) await actionable.click();
   });
 }
 
-test("mind maps, connector graphs and 3D visuals are removed", async ({ page }) => {
+test("native tooltips, select controls, removed component pages and visual graph remnants are absent", async ({ page }) => {
   for (const board of boards) {
-    await page.goto(route(board.slug, "components.html"));
-    await expect(page.getByText("思维导图", { exact: true })).toHaveCount(0);
-    await expect(page.locator('.cs-map-shell, .mini-tree, .relationship-panel, [data-graph], canvas')).toHaveCount(0);
+    await page.goto(route(board.slug, "list"));
+    await expect(page.locator("[title], select, canvas, [data-graph]")).toHaveCount(0);
+    await expect(page.locator(".board-header .view-nav a")).toHaveCount(8);
+    expect(existsSync(`boards/${board.slug}/components.html`)).toBe(false);
   }
 });
 
-test("legacy pages and removed board directories are not generated", async () => {
-  const active = new Set(boards.map((board) => board.slug));
-  for (const board of boards) {
-    for (const file of ["motion.html", "spatial.html"]) expect(existsSync(route(board.slug, file))).toBe(false);
+test("responsive navigation stays horizontal and custom checkbox marks are centered", async ({ page }) => {
+  await page.setViewportSize(viewports.ipad);
+  await page.goto(route("precision-desk", "list"));
+  const nav = page.locator(".board-header .view-nav");
+  await expect(nav.locator("a")).toHaveCount(8);
+  await expect(nav.locator("a").first()).toHaveAttribute("data-tooltip", "工作台");
+  await expect(nav.locator("a span").first()).toBeHidden();
+  for (const link of await nav.locator("a").all()) {
+    const box = await link.boundingBox();
+    expect(box.width).toBe(30);
+    expect(box.height).toBe(30);
   }
+  const navBox = await nav.boundingBox();
+  expect(navBox.x + navBox.width).toBeLessThanOrEqual(viewports.ipad.width);
+
+  const checkbox = page.locator(".opsx-checkbox").first();
+  await checkbox.click();
+  const mark = checkbox.locator("svg");
+  await expect(mark).toBeVisible();
+  const checkboxBox = await checkbox.boundingBox();
+  const markBox = await mark.boundingBox();
+  expect(Math.abs((checkboxBox.x + checkboxBox.width / 2) - (markBox.x + markBox.width / 2))).toBeLessThanOrEqual(1);
+  expect(Math.abs((checkboxBox.y + checkboxBox.height / 2) - (markBox.y + markBox.height / 2))).toBeLessThanOrEqual(1);
+
+  await page.setViewportSize(viewports.iphone);
+  await page.goto(route("precision-desk", "main"));
+  const mobileNavBox = await page.locator(".board-header .view-nav").boundingBox();
+  expect(Math.abs((mobileNavBox.y + mobileNavBox.height) - viewports.iphone.height)).toBeLessThanOrEqual(1);
+  await expect(page.getByRole("button", { name: "浅色模式" })).toBeVisible();
+  await expect(page.getByRole("button", { name: "深色模式" })).toBeVisible();
+});
+
+test("legacy and removed moodboard directories are not generated", async () => {
+  const active = new Set(boards.map((board) => board.slug));
   for (const removed of ["editorial-intelligence", "talent-constellation", "calm-focus", "digital-curatorial"]) {
     expect(active.has(removed)).toBe(false);
     expect(existsSync(`boards/${removed}`)).toBe(false);

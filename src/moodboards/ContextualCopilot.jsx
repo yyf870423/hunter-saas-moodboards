@@ -15,17 +15,17 @@ const suggestions = [
 ];
 
 export function ContextualCopilotDashboard() {
-  const [index, setIndex] = useState(0);
-  const [resolved, setResolved] = useState([]);
   const [toast, setToast] = useState("");
-  const suggestion = suggestions[index];
-  const decide = (accepted) => { setResolved([...new Set([...resolved, index])]); setToast(accepted ? "建议已采纳并等待保存" : "建议已忽略"); if (index < suggestions.length - 1) setIndex(index + 1); };
+  const [scope, setScope] = useState("待审核");
   return (
-    <div className="copilot-dashboard">
-      <aside className="copilot-sidebar"><div><Sparkles /><b>Hunter</b></div><nav>{["候选人", "岗位", "公司", "Agent"].map((item, idx) => <button key={item} className={idx === 0 ? "is-active" : ""} onClick={() => setToast(`已切换到${item}`)}>{item}</button>)}</nav><span>于</span></aside>
-      <main className="copilot-main"><header><div><small>候选人详情</small><h1>林昊</h1><p>具身智能算法负责人 · 穹境机器人</p></div><label><Search /><input placeholder="搜索候选人字段" /></label><button onClick={() => setToast("候选人编辑器已打开")}>编辑资料</button></header><section className="copilot-profile"><div className="copilot-person"><i>林</i><div><h2>林昊</h2><p>具身智能算法负责人</p><span>北京 · 8 年经验</span></div></div><dl><div><dt>当前公司</dt><dd>穹境机器人</dd></div><div><dt>最高学历</dt><dd>博士</dd></div><div><dt>行业</dt><dd>机器人、人工智能</dd></div><div><dt>当前流程</dt><dd>技术复试</dd></div></dl><article><h3>项目经历</h3><p>负责具身智能基础模型、数据闭环和策略学习，带领团队完成从研究到产品验证的多轮迭代。</p></article></section></main>
-
-      <aside className="copilot-panel"><header><div><BrainCircuit /><span><small>智能副驾</small><h2>3 条资料建议</h2></span></div><button onClick={() => setToast("建议面板已收起")}><X /></button></header><div className="copilot-progress"><i><em style={{ width: `${((resolved.length) / suggestions.length) * 100}%` }} /></i><span>{resolved.length} / {suggestions.length} 已处理</span></div><AnimatePresence mode="wait"><motion.article key={index} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -18 }}><span>建议更新 · {suggestion.field}</span><div><small>当前内容</small><p>{suggestion.before}</p></div><div className="is-suggested"><small>建议内容</small><p>{suggestion.after}</p></div><section><ShieldCheck /><p>{suggestion.reason}</p></section><footer><em>{suggestion.confidence}% 可信</em><button onClick={() => decide(false)}><ThumbsDown />忽略</button><button onClick={() => decide(true)}><ThumbsUp />采纳</button></footer></motion.article></AnimatePresence><button className="copilot-all" onClick={() => setToast("已打开全部建议")}>查看全部建议<ArrowRight /></button></aside>
+    <div className="copilot-dashboard copilot-overview">
+      <aside className="copilot-sidebar"><div><Sparkles /><b>Hunter</b></div><nav>{["智能概览", "候选人", "岗位", "公司", "Agent"].map((item, idx) => <button key={item} className={idx === 0 ? "is-active" : ""} onClick={() => setToast(`已切换到${item}`)}>{item}</button>)}</nav><span>于</span></aside>
+      <main className="copilot-overview-main"><header><div><small>INTERCOM COPILOT × SANA · ASSISTANCE</small><h1>智能建议概览</h1><p>集中查看建议质量、待审核内容和采纳后的业务影响。</p></div><label><Search /><input placeholder="搜索建议或业务对象" /></label><button onClick={() => setToast("建议策略已打开")}><BrainCircuit />建议策略</button></header>
+        <section className="copilot-overview-metrics">{[["待审核建议", "12", "其中 4 条高优先"], ["本周采纳", "38", "采纳率 76%"], ["避免重复写入", "9", "代码门禁拦截"], ["平均可信度", "87%", "过去 30 天"]].map(([label, value, note], index) => <article key={label} className={`tone-${index}`}><span>{label}</span><strong>{value}</strong><small>{note}</small></article>)}</section>
+        <div className="copilot-overview-grid"><section className="copilot-suggestion-queue"><header><div><h2>待审核建议</h2><span>按可信度和影响排序</span></div><nav>{["待审核", "已采纳", "已忽略"].map(item => <button key={item} className={scope === item ? "is-active" : ""} onClick={() => setScope(item)}>{item}</button>)}</nav></header>{suggestions.map((item, index) => <article key={item.field}><i className={`tone-${index}`}><Sparkles /></i><span><small>候选人 · 林昊 · {item.field}</small><b>{item.after}</b><p>{item.reason}</p></span><em>{item.confidence}%</em><div><button onClick={() => setToast(`${item.field}建议已忽略`)}><ThumbsDown />忽略</button><button onClick={() => setToast(`${item.field}建议已采纳`)}><ThumbsUp />采纳</button></div></article>)}</section>
+          <aside className="copilot-impact"><header><h2>建议影响</h2><span>本周</span></header>{[["候选人资料", 18, "+12%"], ["岗位解析", 9, "+5%"], ["公司资料", 7, "+8%"]].map(([label, value, change]) => <button key={label} onClick={() => setToast(`已打开${label}建议`)}><span><b>{label}</b><small>{value} 条已采纳</small></span><em>{change}</em><ArrowRight /></button>)}<section><ShieldCheck /><span><b>所有建议均通过代码门禁</b><small>非法结构不会进入审核和写库流程</small></span></section></aside>
+        </div>
+      </main>
       <AnimatePresence>{toast && <motion.div className="copilot-toast" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><Check /><span>{toast}</span><button onClick={() => setToast("")}><X /></button></motion.div>}</AnimatePresence>
     </div>
   );

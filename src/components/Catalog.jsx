@@ -1,10 +1,10 @@
-import { ArrowUpRight, Component, GalleryVerticalEnd, Search } from "lucide-react";
+import { ArrowUpRight, Bot, GalleryVerticalEnd, Search } from "lucide-react";
 import { useMemo, useState } from "react";
 import { boards } from "../data/boards";
 
 const views = [
-  ["", "Dashboard", GalleryVerticalEnd],
-  ["components.html", "组件与动效", Component],
+  ["", "工作台", GalleryVerticalEnd],
+  ["agent.html", "Agent 对话", Bot],
 ];
 
 export function Catalog() {
@@ -40,12 +40,11 @@ export function Catalog() {
           >
             <a className="catalog-visual" href={`${import.meta.env.BASE_URL}boards/${board.slug}/`} aria-label={`预览${board.name}`}>
               <img src={`${import.meta.env.BASE_URL}previews/${board.slug}.png`} alt="" />
-              <span className="visual-number">{board.id}</span>
             </a>
             <div className="catalog-card-copy">
               <div className="catalog-card-title">
                 <div><h2>{board.name}</h2><p>{board.en}</p></div>
-                <a href={`${import.meta.env.BASE_URL}boards/${board.slug}/`} title={`打开${board.name}`}><ArrowUpRight size={19} /></a>
+                <a className="has-tooltip" href={`${import.meta.env.BASE_URL}boards/${board.slug}/`} data-tooltip={`打开${board.name}`} aria-label={`打开${board.name}`}><ArrowUpRight size={19} /></a>
               </div>
               <p className="catalog-premise">{board.premise}</p>
               <div className="catalog-tags">{board.tags.map((tag) => <span key={tag}>{tag}</span>)}</div>

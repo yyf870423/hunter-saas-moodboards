@@ -1,11 +1,8 @@
 import { mkdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
-import { boards } from "../src/data/boards.js";
+import { boards, viewMeta } from "../src/data/boards.js";
 
-const views = [
-  ["index.html", "main", "Dashboard"],
-  ["components.html", "components", "组件与动效"],
-];
+const views = Object.entries(viewMeta).map(([view, meta]) => [meta.file, view, meta.name]);
 
 const shell = ({ board = "", view = "catalog", title = "Hunter SaaS Moodboards" }) => `<!doctype html>
 <html lang="zh-CN">

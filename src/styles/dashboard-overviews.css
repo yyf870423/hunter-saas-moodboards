@@ -1,0 +1,460 @@
+/* Five independent dashboard systems. All colors resolve through board theme tokens. */
+
+.inbox-overview,
+.journal-overview,
+.task-overview,
+.research-overview,
+.copilot-overview {
+  min-height: calc(100vh - var(--header-height));
+  color: var(--ink);
+  background: var(--canvas);
+  font-family: var(--theme-font);
+}
+
+.inbox-overview button,
+.journal-overview button,
+.task-overview button,
+.research-overview button,
+.copilot-overview button {
+  appearance: none;
+  color: inherit;
+  font: inherit;
+}
+
+/* Front x Intercom: compact communication control room. */
+.inbox-overview { display: grid; grid-template-columns: 68px minmax(0, 1fr); }
+.inbox-overview .inbox-appbar {
+  position: sticky; top: var(--header-height); height: calc(100vh - var(--header-height));
+  padding: 16px 10px; display: flex; flex-direction: column; align-items: center; gap: 9px;
+  background: color-mix(in srgb, var(--panel) 92%, var(--ink)); border-right: 1px solid var(--line);
+}
+.inbox-overview .inbox-appbar > b { width: 38px; height: 38px; margin-bottom: 12px; border-radius: 11px; display: grid; place-items: center; background: var(--accent); color: var(--canvas); font-size: 18px; }
+.inbox-overview .inbox-appbar button { width: 40px; height: 40px; min-height: 40px; border-radius: 10px; display: grid; place-items: center; color: var(--muted); }
+.inbox-overview .inbox-appbar button:hover { background: color-mix(in srgb, var(--accent) 12%, transparent); color: var(--accent); transform: translateY(-1px); }
+.inbox-overview .inbox-appbar button.is-active { background: color-mix(in srgb, var(--accent) 18%, transparent); color: var(--accent); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 38%, transparent); }
+.inbox-overview .inbox-appbar svg { width: 18px; }
+.inbox-overview .inbox-appbar > span { width: 34px; height: 34px; margin-top: auto; border-radius: 50%; display: grid; place-items: center; background: var(--ink); color: var(--panel); font-size: 12px; font-weight: 800; }
+.inbox-overview-main { min-width: 0; max-width: 1500px; width: 100%; margin: 0 auto; padding: 26px 30px 52px; }
+.inbox-overview-head { display: grid; grid-template-columns: minmax(280px, 1fr) minmax(240px, 360px) auto; gap: 12px; align-items: center; }
+.inbox-overview-head small { color: var(--accent); font-size: 11px; font-weight: 800; }
+.inbox-overview-head h1 { margin: 5px 0 3px; font-family: var(--display-font); font-size: 28px; }
+.inbox-overview-head p { margin: 0; color: var(--muted); font-size: 13px; }
+.inbox-overview-head label { height: 42px; padding: 0 12px; display: flex; align-items: center; gap: 8px; border: 1px solid var(--line); border-radius: 12px; background: var(--panel); }
+.inbox-overview-head label:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 14%, transparent); }
+.inbox-overview-head label svg { width: 17px; color: var(--muted); }
+.inbox-overview-head label input { min-width: 0; flex: 1; color: var(--ink); }
+.inbox-overview-head > button { height: 42px; padding: 0 15px; display: inline-flex; align-items: center; gap: 7px; border-radius: 12px; background: var(--accent); color: var(--canvas); font-weight: 750; }
+.inbox-overview-head > button:hover { filter: brightness(1.08); transform: translateY(-1px); }
+.inbox-overview-head > button svg { width: 16px; }
+.inbox-overview-metrics { margin-top: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.inbox-overview-metrics article { min-height: 108px; padding: 16px; display: grid; align-content: space-between; border: 1px solid var(--line); border-radius: 13px; background: var(--panel); box-shadow: 0 8px 22px color-mix(in srgb, var(--ink) 5%, transparent); }
+.inbox-overview-metrics article::before { content: ""; width: 30px; height: 4px; border-radius: 3px; background: var(--accent); }
+.inbox-overview-metrics .tone-2::before, .inbox-overview-metrics .tone-3::before { background: var(--signal); }
+.inbox-overview-metrics span { color: var(--muted); font-size: 11px; font-weight: 700; }
+.inbox-overview-metrics strong { font-size: 26px; }
+.inbox-overview-metrics small { color: var(--muted); font-size: 10px; }
+.inbox-response-band { margin-top: 12px; padding: 14px 16px 11px; border: 1px solid var(--line); border-radius: 14px; background: color-mix(in srgb, var(--panel) 94%, var(--accent)); }
+.inbox-response-band > header { display: flex; align-items: center; justify-content: space-between; }
+.inbox-response-band h2 { margin: 0; font-size: 14px; }
+.inbox-response-band header span { color: var(--muted); font-size: 10px; }
+.inbox-response-band header nav { padding: 3px; display: flex; gap: 2px; border-radius: 9px; background: color-mix(in srgb, var(--canvas) 80%, var(--panel)); }
+.inbox-response-band header nav button { min-height: 28px; padding: 0 10px; border-radius: 7px; color: var(--muted); font-size: 10px; }
+.inbox-response-band header nav button.is-active { background: var(--panel); color: var(--ink); box-shadow: 0 2px 8px color-mix(in srgb, var(--ink) 9%, transparent); }
+.inbox-response-band > div { height: 76px; margin-top: 10px; display: flex; align-items: end; gap: 8px; }
+.inbox-response-band > div i { position: relative; flex: 1; min-height: 8px; border-radius: 5px 5px 2px 2px; background: color-mix(in srgb, var(--accent) 72%, var(--panel)); transition: height .25s ease, filter .2s ease; }
+.inbox-response-band > div i:hover { filter: brightness(1.15); }
+.inbox-response-band > div i span { position: absolute; left: 50%; bottom: -15px; transform: translateX(-50%); color: var(--muted); font-size: 8px; font-style: normal; white-space: nowrap; }
+.inbox-overview-grid { margin-top: 24px; display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(280px, .65fr); gap: 12px; align-items: start; }
+.inbox-overview-threads, .inbox-overview-actions { border: 1px solid var(--line); border-radius: 14px; background: var(--panel); overflow: hidden; }
+.inbox-overview-threads > header, .inbox-overview-actions > header { min-height: 54px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.inbox-overview-threads h2, .inbox-overview-actions h2 { margin: 0; font-size: 14px; }
+.inbox-overview-threads header span, .inbox-overview-actions header span { color: var(--muted); font-size: 10px; }
+.inbox-overview-threads header button { display: inline-flex; align-items: center; gap: 5px; color: var(--accent); font-size: 11px; font-weight: 750; }
+.inbox-overview-threads header button svg { width: 14px; }
+.inbox-overview-threads > button { width: 100%; min-height: 76px; padding: 11px 14px; display: grid; grid-template-columns: 38px minmax(0, 1fr) auto 18px; gap: 10px; align-items: center; border-top: 1px solid color-mix(in srgb, var(--line) 55%, transparent); text-align: left; }
+.inbox-overview-threads > button:hover { background: color-mix(in srgb, var(--accent) 7%, var(--panel)); }
+.inbox-overview-threads > button > i { width: 36px; height: 36px; display: grid; place-items: center; border-radius: 12px; background: color-mix(in srgb, var(--accent) 17%, var(--panel)); color: var(--accent); font-style: normal; font-weight: 800; }
+.inbox-overview-threads > button > span { min-width: 0; display: grid; gap: 2px; }
+.inbox-overview-threads b { font-size: 12px; }
+.inbox-overview-threads small, .inbox-overview-threads p, .inbox-overview-threads time { color: var(--muted); font-size: 10px; }
+.inbox-overview-threads p { margin: 3px 0 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.inbox-overview-threads > button > div { display: grid; justify-items: end; gap: 5px; }
+.inbox-overview-threads em { padding: 3px 6px; border-radius: 999px; background: color-mix(in srgb, var(--signal) 15%, var(--panel)); color: var(--signal); font-size: 9px; font-style: normal; font-weight: 800; }
+.inbox-overview-threads > button > svg { width: 14px; color: var(--muted); }
+.inbox-overview-actions > button { width: 100%; min-height: 64px; padding: 10px 13px; display: grid; grid-template-columns: 32px 1fr 20px; align-items: center; gap: 9px; border-top: 1px solid color-mix(in srgb, var(--line) 55%, transparent); text-align: left; }
+.inbox-overview-actions > button:hover { background: color-mix(in srgb, var(--accent) 7%, var(--panel)); }
+.inbox-overview-actions > button > i { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 9px; background: color-mix(in srgb, var(--accent) 12%, var(--panel)); color: var(--accent); }
+.inbox-overview-actions svg { width: 14px; }
+.inbox-overview-actions > button span { display: grid; gap: 3px; }
+.inbox-overview-actions > button b { font-size: 11px; }
+.inbox-overview-actions > button small { color: var(--muted); font-size: 9px; }
+.inbox-overview-actions > footer { margin: 12px; padding: 12px; display: flex; gap: 9px; border-radius: 10px; background: color-mix(in srgb, var(--accent) 9%, var(--panel)); color: var(--muted); }
+.inbox-overview-actions > footer svg { flex: 0 0 16px; color: var(--accent); }
+.inbox-overview-actions > footer p { margin: 0; font-size: 10px; line-height: 1.6; }
+
+/* Notion x Granola: editorial talent journal. */
+.journal-overview { display: grid; grid-template-columns: 62px minmax(0, 1fr); }
+.journal-overview .journal-rail { position: sticky; top: var(--header-height); height: calc(100vh - var(--header-height)); padding: 15px 9px; display: flex; flex-direction: column; align-items: center; background: var(--panel); border-right: 1px solid var(--line); }
+.journal-overview .journal-rail > b { width: 34px; height: 34px; display: grid; place-items: center; border: 1px solid var(--ink); font-family: var(--display-font); font-size: 18px; }
+.journal-overview .journal-rail nav { margin-top: 24px; display: grid; gap: 8px; }
+.journal-overview .journal-rail button { width: 36px; height: 36px; min-height: 36px; display: grid; place-items: center; color: var(--muted); }
+.journal-overview .journal-rail button:hover, .journal-overview .journal-rail button.is-active { background: color-mix(in srgb, var(--accent) 10%, var(--panel)); color: var(--accent); }
+.journal-overview .journal-rail svg { width: 17px; }
+.journal-overview .journal-rail > span { width: 30px; height: 30px; margin-top: auto; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--panel); font-size: 11px; font-weight: 800; }
+.journal-overview-main { min-width: 0; max-width: 1420px; width: 100%; margin: 0 auto; padding: 32px 40px 60px; }
+.journal-overview .journal-head { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding-bottom: 22px; border-bottom: 1px solid var(--ink); }
+.journal-overview .journal-head small { color: var(--accent); font-size: 10px; font-weight: 800; }
+.journal-overview .journal-head h1 { margin: 7px 0 5px; font-family: var(--display-font); font-size: 32px; font-weight: 650; }
+.journal-overview .journal-head p { margin: 0; color: var(--muted); font-size: 13px; }
+.journal-head-actions { display: flex; align-items: center; gap: 10px; }
+.journal-head-actions nav { padding: 3px; display: flex; background: color-mix(in srgb, var(--line) 25%, var(--panel)); }
+.journal-head-actions nav button { min-height: 32px; padding: 0 12px; color: var(--muted); font-size: 11px; }
+.journal-head-actions nav button.is-active { background: var(--panel); color: var(--ink); box-shadow: 0 1px 5px color-mix(in srgb, var(--ink) 10%, transparent); }
+.journal-head-actions > button { min-height: 38px; padding: 0 13px; display: flex; align-items: center; gap: 6px; border: 1px solid var(--ink); background: var(--ink); color: var(--panel); font-weight: 750; }
+.journal-head-actions > button:hover { transform: translateY(-1px); box-shadow: 3px 3px 0 color-mix(in srgb, var(--accent) 55%, transparent); }
+.journal-head-actions > button svg { width: 15px; }
+.journal-overview-metrics { display: grid; grid-template-columns: repeat(4, 1fr); border-bottom: 1px solid var(--line); }
+.journal-overview-metrics article { min-height: 112px; padding: 20px 18px; border-right: 1px solid var(--line); display: grid; align-content: space-between; }
+.journal-overview-metrics article:last-child { border-right: 0; }
+.journal-overview-metrics span, .journal-overview-metrics small { color: var(--muted); font-size: 10px; }
+.journal-overview-metrics strong { font-family: var(--display-font); font-size: 27px; font-weight: 650; }
+.journal-overview-grid { margin-top: 22px; display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(280px, .85fr); gap: 16px; align-items: start; }
+.journal-change-feed, .journal-talent-list, .journal-overview-followup { border-top: 2px solid var(--ink); }
+.journal-change-feed { grid-row: span 2; }
+.journal-change-feed > header, .journal-talent-list > header, .journal-overview-followup > header { min-height: 56px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.journal-change-feed h2, .journal-talent-list h2, .journal-overview-followup h2 { margin: 0; font-family: var(--display-font); font-size: 16px; }
+.journal-change-feed header span, .journal-talent-list header span, .journal-overview-followup header span { color: var(--muted); font-size: 10px; }
+.journal-change-feed header button, .journal-talent-list header button { display: flex; align-items: center; gap: 5px; color: var(--accent); font-size: 11px; font-weight: 750; }
+.journal-change-feed header svg, .journal-talent-list header svg { width: 14px; }
+.journal-change-feed > button { width: 100%; min-height: 94px; display: grid; grid-template-columns: 80px 8px minmax(0, 1fr) 18px; gap: 12px; align-items: center; border-bottom: 1px solid var(--line); text-align: left; }
+.journal-change-feed > button:hover { padding-left: 8px; background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.journal-change-feed time { color: var(--muted); font-size: 9px; }
+.journal-change-feed > button > i { width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent); }
+.journal-change-feed > button > i.tone-1, .journal-change-feed > button > i.tone-2 { background: var(--signal); box-shadow: 0 0 0 5px color-mix(in srgb, var(--signal) 10%, transparent); }
+.journal-change-feed > button > span { min-width: 0; display: grid; gap: 3px; }
+.journal-change-feed small, .journal-change-feed p { color: var(--muted); font-size: 10px; }
+.journal-change-feed b { font-size: 12px; }
+.journal-change-feed p { margin: 3px 0 0; line-height: 1.55; }
+.journal-change-feed svg { width: 14px; color: var(--muted); }
+.journal-talent-list > button { width: 100%; min-height: 62px; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto 16px; gap: 9px; align-items: center; border-bottom: 1px solid var(--line); text-align: left; }
+.journal-talent-list > button:hover { background: color-mix(in srgb, var(--accent) 5%, transparent); }
+.journal-talent-list > button > i { width: 32px; height: 32px; display: grid; place-items: center; background: color-mix(in srgb, var(--accent) 10%, var(--panel)); color: var(--accent); font-style: normal; font-weight: 800; }
+.journal-talent-list > button span { min-width: 0; display: grid; gap: 3px; }
+.journal-talent-list b { font-size: 11px; }
+.journal-talent-list small, .journal-talent-list em { color: var(--muted); font-size: 9px; font-style: normal; }
+.journal-talent-list svg { width: 13px; color: var(--muted); }
+.journal-overview-followup { grid-column: 2; }
+.journal-overview-followup > button { width: 100%; min-height: 58px; display: grid; grid-template-columns: 30px 1fr; gap: 8px; align-items: center; border-bottom: 1px solid var(--line); text-align: left; }
+.journal-overview-followup > button:hover { padding-left: 6px; color: var(--accent); }
+.journal-overview-followup > button > i { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--line); }
+.journal-overview-followup svg { width: 13px; }
+.journal-overview-followup > button span { display: grid; gap: 2px; }
+.journal-overview-followup b { font-size: 10px; }
+.journal-overview-followup small { color: var(--muted); font-size: 9px; }
+.journal-overview-followup > div { margin-top: 12px; padding: 14px; display: flex; gap: 10px; background: color-mix(in srgb, var(--accent) 7%, var(--panel)); color: var(--muted); }
+.journal-overview-followup > div svg { flex: 0 0 16px; color: var(--accent); }
+.journal-overview-followup > div p { margin: 0; font-size: 10px; line-height: 1.6; }
+
+/* WorkBuddy x Vercel AI: dense Agent task operations. */
+.task-overview { display: grid; grid-template-columns: 210px minmax(0, 1fr); }
+.task-overview-sidebar { position: sticky; top: var(--header-height); height: calc(100vh - var(--header-height)); padding: 22px 14px; display: flex; flex-direction: column; background: #162232; color: #f4f7fc; }
+.task-overview-sidebar > div { padding: 0 9px 24px; display: flex; align-items: center; gap: 9px; }
+.task-overview-sidebar > div svg { width: 20px; color: var(--accent); }
+.task-overview-sidebar > div b { font-size: 14px; }
+.task-overview-sidebar nav { display: grid; gap: 4px; }
+.task-overview-sidebar nav button { min-height: 38px; padding: 0 11px; border-radius: 8px; color: color-mix(in srgb, var(--panel) 66%, transparent); text-align: left; font-size: 11px; }
+.task-overview-sidebar nav button:hover, .task-overview-sidebar nav button.is-active { background: color-mix(in srgb, var(--accent) 22%, transparent); color: var(--panel); }
+.task-overview-sidebar section { margin-top: auto; padding: 14px; display: grid; gap: 5px; border: 1px solid color-mix(in srgb, var(--panel) 18%, transparent); border-radius: 10px; background: color-mix(in srgb, var(--panel) 7%, transparent); }
+.task-overview-sidebar section small, .task-overview-sidebar section span { color: color-mix(in srgb, var(--panel) 60%, transparent); font-size: 9px; }
+.task-overview-sidebar section strong { font-size: 19px; }
+.task-overview-sidebar > i { width: 31px; height: 31px; margin-top: 14px; display: grid; place-items: center; border-radius: 50%; background: var(--accent); color: var(--canvas); font-size: 11px; font-style: normal; font-weight: 800; }
+.task-overview-main { min-width: 0; max-width: 1500px; width: 100%; margin: 0 auto; padding: 26px 30px 54px; }
+.task-overview-main > header { display: grid; grid-template-columns: minmax(300px, 1fr) minmax(230px, 340px) auto; gap: 12px; align-items: center; }
+.task-overview-main > header small { color: var(--accent); font-size: 10px; font-weight: 800; }
+.task-overview-main > header h1 { margin: 5px 0 3px; font-size: 27px; }
+.task-overview-main > header p { margin: 0; color: var(--muted); font-size: 12px; }
+.task-overview-main > header label { height: 40px; padding: 0 11px; display: flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 9px; background: var(--panel); }
+.task-overview-main > header label:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
+.task-overview-main > header label svg { width: 16px; color: var(--muted); }
+.task-overview-main > header label input { flex: 1; color: var(--ink); }
+.task-overview-main > header > button { height: 40px; padding: 0 14px; display: flex; align-items: center; gap: 6px; border-radius: 9px; background: var(--accent); color: var(--canvas); font-weight: 750; }
+.task-overview-main > header > button:hover { filter: brightness(1.08); }
+.task-overview-main > header > button svg { width: 16px; }
+.task-overview-metrics { margin-top: 20px; display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--line); border-radius: 11px; background: var(--panel); overflow: hidden; }
+.task-overview-metrics article { min-height: 98px; padding: 15px 17px; display: grid; align-content: space-between; border-right: 1px solid var(--line); }
+.task-overview-metrics article:last-child { border-right: 0; }
+.task-overview-metrics span, .task-overview-metrics small { color: var(--muted); font-size: 9px; }
+.task-overview-metrics strong { font-size: 25px; }
+.task-overview-metrics .tone-1 strong { color: var(--signal); }
+.task-overview-grid { margin-top: 14px; display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(280px, .65fr); gap: 14px; align-items: start; }
+.task-overview-runs, .task-overview-delivery { border: 1px solid var(--line); border-radius: 11px; background: var(--panel); overflow: hidden; }
+.task-overview-runs > header, .task-overview-delivery > header { min-height: 56px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.task-overview-runs h2, .task-overview-delivery h2 { margin: 0; font-size: 13px; }
+.task-overview-runs header span, .task-overview-delivery header span { color: var(--muted); font-size: 9px; }
+.task-overview-runs header nav { padding: 3px; display: flex; gap: 2px; border-radius: 8px; background: color-mix(in srgb, var(--canvas) 78%, var(--panel)); }
+.task-overview-runs header nav button { min-height: 28px; padding: 0 9px; border-radius: 6px; color: var(--muted); font-size: 9px; }
+.task-overview-runs header nav button.is-active { background: var(--panel); color: var(--ink); box-shadow: 0 1px 5px color-mix(in srgb, var(--ink) 10%, transparent); }
+.task-overview-runs > button { width: 100%; min-height: 82px; padding: 11px 14px; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto 68px 16px; gap: 10px; align-items: center; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); text-align: left; }
+.task-overview-runs > button:hover { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.task-overview-runs > button > i { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; background: color-mix(in srgb, var(--accent) 14%, var(--panel)); color: var(--accent); }
+.task-overview-runs > button > i.status-1 { background: color-mix(in srgb, var(--signal) 14%, var(--panel)); color: var(--signal); }
+.task-overview-runs svg { width: 15px; }
+.task-overview-runs > button span { min-width: 0; display: grid; gap: 3px; }
+.task-overview-runs > button small, .task-overview-runs > button p, .task-overview-runs time { color: var(--muted); font-size: 9px; }
+.task-overview-runs > button b { font-size: 11px; }
+.task-overview-runs > button p { margin: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.task-overview-runs > button em { padding: 4px 7px; border-radius: 999px; background: color-mix(in srgb, var(--accent) 12%, var(--panel)); color: var(--accent); font-size: 9px; font-style: normal; font-weight: 750; }
+.task-overview-delivery > button { width: 100%; min-height: 62px; padding: 9px 12px; display: grid; grid-template-columns: 32px 1fr 16px; align-items: center; gap: 8px; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); text-align: left; }
+.task-overview-delivery > button:hover { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.task-overview-delivery > button > i { width: 30px; height: 30px; display: grid; place-items: center; border-radius: 8px; background: color-mix(in srgb, var(--accent) 12%, var(--panel)); color: var(--accent); }
+.task-overview-delivery svg { width: 14px; }
+.task-overview-delivery > button span { display: grid; gap: 2px; }
+.task-overview-delivery > button b { font-size: 10px; }
+.task-overview-delivery > button small { color: var(--muted); font-size: 9px; }
+.task-overview-delivery > section { margin: 12px; padding: 12px; display: grid; grid-template-columns: 28px 1fr; gap: 8px; border-radius: 9px; background: color-mix(in srgb, var(--signal) 11%, var(--panel)); }
+.task-overview-delivery > section > svg { color: var(--signal); }
+.task-overview-delivery > section span { display: grid; gap: 2px; }
+.task-overview-delivery > section b { font-size: 10px; }
+.task-overview-delivery > section small { color: var(--muted); font-size: 9px; }
+.task-overview-delivery > section button { grid-column: 1/3; min-height: 31px; border-radius: 7px; background: var(--signal); color: var(--panel); font-size: 10px; font-weight: 750; }
+
+/* IBM Carbon x Dovetail: paper-led research overview. */
+.research-overview { background-image: linear-gradient(color-mix(in srgb, var(--line) 22%, transparent) 1px, transparent 1px); background-size: 100% 42px; }
+.research-overview .research-overview-main { max-width: 1430px; width: 100%; margin: 0 auto; padding: 30px 38px 64px; }
+.research-overview-main > header { padding-bottom: 22px; display: flex; align-items: end; justify-content: space-between; gap: 24px; border-bottom: 3px solid var(--ink); }
+.research-overview-main > header small { color: var(--accent); font-size: 10px; font-weight: 800; }
+.research-overview-main > header h1 { margin: 7px 0 5px; font-family: var(--display-font); font-size: 31px; font-weight: 650; }
+.research-overview-main > header p { margin: 0; color: var(--muted); font-size: 12px; }
+.research-overview-main > header nav { display: flex; gap: 0; border: 1px solid var(--ink); }
+.research-overview-main > header nav button { min-height: 36px; padding: 0 14px; font-size: 10px; }
+.research-overview-main > header nav button + button { border-left: 1px solid var(--ink); }
+.research-overview-main > header nav button.is-active { background: var(--ink); color: var(--panel); }
+.research-overview-metrics { display: grid; grid-template-columns: repeat(4, 1fr); background: var(--panel); border-bottom: 1px solid var(--ink); }
+.research-overview-metrics article { min-height: 100px; padding: 17px 18px; display: grid; align-content: space-between; border-right: 1px solid var(--line); }
+.research-overview-metrics article:last-child { border-right: 0; }
+.research-overview-metrics span, .research-overview-metrics small { color: var(--muted); font-size: 9px; }
+.research-overview-metrics strong { font-family: var(--display-font); font-size: 25px; font-weight: 650; }
+.research-overview-grid { margin-top: 24px; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(280px, .7fr); gap: 16px; align-items: start; }
+.research-projects, .research-source-health, .research-overview-insights { background: var(--panel); border: 1px solid var(--ink); }
+.research-projects { grid-row: span 2; }
+.research-projects > header, .research-source-health > header, .research-overview-insights > header { min-height: 52px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--ink); }
+.research-projects h2, .research-source-health h2, .research-overview-insights h2 { margin: 0; font-family: var(--display-font); font-size: 15px; }
+.research-projects header span, .research-source-health header span, .research-overview-insights header span { color: var(--muted); font-size: 9px; }
+.research-projects header button { min-height: 30px; padding: 0 9px; display: flex; align-items: center; gap: 5px; border: 1px solid var(--line); font-size: 10px; }
+.research-projects header button:hover { background: color-mix(in srgb, var(--accent) 7%, var(--panel)); }
+.research-projects header svg { width: 13px; }
+.research-projects > button { width: 100%; min-height: 84px; padding: 10px 14px; display: grid; grid-template-columns: 34px minmax(0, 1fr) 130px 16px; gap: 10px; align-items: center; border-top: 1px solid var(--line); text-align: left; }
+.research-projects > button:hover { padding-left: 20px; background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.research-projects > button > i { width: 32px; height: 38px; display: grid; place-items: center; border: 1px solid var(--ink); background: color-mix(in srgb, var(--signal) 10%, var(--panel)); color: var(--signal); }
+.research-projects > button > i svg { width: 15px; }
+.research-projects > button > span { min-width: 0; display: grid; gap: 3px; }
+.research-projects small, .research-projects p { color: var(--muted); font-size: 9px; }
+.research-projects b { font-size: 11px; }
+.research-projects p { margin: 0; }
+.research-projects > button > div { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 6px; }
+.research-projects > button > div::before { content: ""; grid-column: 1; height: 5px; background: var(--line); }
+.research-projects > button > div em { grid-column: 1; grid-row: 1; height: 5px; background: var(--accent); z-index: 1; }
+.research-projects > button > div small { grid-column: 2; grid-row: 1; }
+.research-projects > button > svg { width: 14px; color: var(--muted); }
+.research-source-health > button { width: 100%; min-height: 58px; padding: 9px 12px; display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; align-items: center; gap: 8px; border-top: 1px solid var(--line); text-align: left; }
+.research-source-health > button:hover { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.research-source-health > button > i { width: 27px; height: 31px; display: grid; place-items: center; border: 1px solid var(--ink); color: var(--accent); }
+.research-source-health > button > i.tone-1, .research-source-health > button > i.tone-2 { color: var(--signal); }
+.research-source-health > button svg { width: 13px; }
+.research-source-health > button span { min-width: 0; display: grid; gap: 2px; }
+.research-source-health > button b { font-size: 10px; }
+.research-source-health > button small { color: var(--muted); font-size: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.research-source-health > button em { color: var(--accent); font-size: 9px; font-style: normal; font-weight: 750; white-space: nowrap; }
+.research-overview-insights > button { width: 100%; min-height: 58px; padding: 9px 12px; display: grid; grid-template-columns: 30px 1fr 14px; align-items: center; gap: 8px; border-top: 1px solid var(--line); text-align: left; }
+.research-overview-insights > button:hover { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.research-overview-insights > button > i { width: 28px; height: 28px; display: grid; place-items: center; border: 1px solid var(--line); color: var(--accent); }
+.research-overview-insights > button > i.tone-1, .research-overview-insights > button > i.tone-2 { color: var(--signal); }
+.research-overview-insights svg { width: 13px; }
+.research-overview-insights > button span { display: grid; gap: 2px; }
+.research-overview-insights b { font-size: 10px; }
+.research-overview-insights small { color: var(--muted); font-size: 9px; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.research-overview-insights footer { margin: 12px; padding: 12px; display: flex; gap: 8px; background: color-mix(in srgb, var(--accent) 8%, var(--panel)); color: var(--muted); }
+.research-overview-insights footer svg { flex: 0 0 15px; color: var(--accent); }
+.research-overview-insights footer p { margin: 0; font-size: 9px; line-height: 1.6; }
+
+/* Intercom Copilot x Sana: suggestion-first intelligence dashboard. */
+.copilot-overview { display: grid; grid-template-columns: 220px minmax(0, 1fr); }
+.copilot-overview .copilot-sidebar { position: sticky; top: var(--header-height); height: calc(100vh - var(--header-height)); padding: 22px 15px; display: flex; flex-direction: column; background: color-mix(in srgb, var(--panel) 91%, var(--accent)); border-right: 1px solid var(--line); }
+.copilot-overview .copilot-sidebar > b { padding: 0 10px 26px; font-size: 18px; }
+.copilot-overview .copilot-sidebar nav { display: grid; gap: 4px; }
+.copilot-overview .copilot-sidebar nav button { min-height: 39px; padding: 0 11px; display: flex; align-items: center; gap: 8px; border-radius: 9px; color: var(--muted); text-align: left; font-size: 11px; }
+.copilot-overview .copilot-sidebar nav button:hover, .copilot-overview .copilot-sidebar nav button.is-active { background: color-mix(in srgb, var(--accent) 12%, var(--panel)); color: var(--accent); }
+.copilot-overview .copilot-sidebar nav svg { width: 16px; }
+.copilot-overview .copilot-sidebar > section { margin-top: auto; padding: 13px; display: grid; gap: 5px; border: 1px solid var(--line); border-radius: 11px; background: var(--panel); }
+.copilot-overview .copilot-sidebar > section small, .copilot-overview .copilot-sidebar > section span { color: var(--muted); font-size: 9px; }
+.copilot-overview .copilot-sidebar > section strong { font-size: 19px; }
+.copilot-overview .copilot-sidebar > i { width: 32px; height: 32px; margin-top: 13px; display: grid; place-items: center; border-radius: 50%; background: var(--ink); color: var(--panel); font-size: 11px; font-style: normal; font-weight: 800; }
+.copilot-overview-main { min-width: 0; max-width: 1480px; width: 100%; margin: 0 auto; padding: 27px 31px 55px; }
+.copilot-overview-main > header { display: grid; grid-template-columns: minmax(310px, 1fr) minmax(240px, 350px) auto; gap: 12px; align-items: center; }
+.copilot-overview-main > header small { color: var(--accent); font-size: 10px; font-weight: 800; }
+.copilot-overview-main > header h1 { margin: 5px 0 3px; font-size: 28px; }
+.copilot-overview-main > header p { margin: 0; color: var(--muted); font-size: 12px; }
+.copilot-overview-main > header label { height: 41px; padding: 0 11px; display: flex; align-items: center; gap: 7px; border: 1px solid var(--line); border-radius: 10px; background: var(--panel); }
+.copilot-overview-main > header label:focus-within { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 12%, transparent); }
+.copilot-overview-main > header label svg { width: 16px; color: var(--muted); }
+.copilot-overview-main > header label input { flex: 1; color: var(--ink); }
+.copilot-overview-main > header > button { height: 41px; padding: 0 14px; display: flex; align-items: center; gap: 6px; border-radius: 10px; background: var(--ink); color: var(--panel); font-weight: 750; }
+.copilot-overview-main > header > button:hover { background: var(--accent); color: var(--canvas); }
+.copilot-overview-main > header > button svg { width: 16px; }
+.copilot-overview-metrics { margin-top: 20px; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.copilot-overview-metrics article { min-height: 105px; padding: 15px; display: grid; align-content: space-between; border: 1px solid var(--line); border-radius: 11px; background: var(--panel); }
+.copilot-overview-metrics article::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 5px color-mix(in srgb, var(--accent) 10%, transparent); }
+.copilot-overview-metrics .tone-2::before, .copilot-overview-metrics .tone-3::before { background: var(--signal); box-shadow: 0 0 0 5px color-mix(in srgb, var(--signal) 10%, transparent); }
+.copilot-overview-metrics span, .copilot-overview-metrics small { color: var(--muted); font-size: 9px; }
+.copilot-overview-metrics strong { font-size: 26px; }
+.copilot-overview-grid { margin-top: 14px; display: grid; grid-template-columns: minmax(0, 1.45fr) minmax(290px, .7fr); gap: 14px; align-items: start; }
+.copilot-suggestion-queue, .copilot-impact { border: 1px solid var(--line); border-radius: 12px; background: var(--panel); overflow: hidden; }
+.copilot-suggestion-queue > header, .copilot-impact > header { min-height: 56px; padding: 0 15px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }
+.copilot-suggestion-queue h2, .copilot-impact h2 { margin: 0; font-size: 13px; }
+.copilot-suggestion-queue header span, .copilot-impact header span { color: var(--muted); font-size: 9px; }
+.copilot-suggestion-queue header nav { padding: 3px; display: flex; gap: 2px; border-radius: 8px; background: color-mix(in srgb, var(--canvas) 78%, var(--panel)); }
+.copilot-suggestion-queue header nav button { min-height: 28px; padding: 0 9px; border-radius: 6px; color: var(--muted); font-size: 9px; }
+.copilot-suggestion-queue header nav button.is-active { background: var(--panel); color: var(--ink); box-shadow: 0 1px 5px color-mix(in srgb, var(--ink) 10%, transparent); }
+.copilot-suggestion-queue > article { min-height: 102px; padding: 13px 14px; display: grid; grid-template-columns: 34px minmax(0, 1fr) 48px auto; gap: 10px; align-items: center; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); }
+.copilot-suggestion-queue > article:hover { background: color-mix(in srgb, var(--accent) 5%, var(--panel)); }
+.copilot-suggestion-queue > article > i { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; background: color-mix(in srgb, var(--accent) 13%, var(--panel)); color: var(--accent); }
+.copilot-suggestion-queue > article > i.tone-1, .copilot-suggestion-queue > article > i.tone-2 { background: color-mix(in srgb, var(--signal) 12%, var(--panel)); color: var(--signal); }
+.copilot-suggestion-queue svg { width: 14px; }
+.copilot-suggestion-queue > article > span { min-width: 0; display: grid; gap: 3px; }
+.copilot-suggestion-queue > article small, .copilot-suggestion-queue > article p { color: var(--muted); font-size: 9px; }
+.copilot-suggestion-queue > article b { font-size: 11px; }
+.copilot-suggestion-queue > article p { margin: 0; line-height: 1.5; }
+.copilot-suggestion-queue > article > em { color: var(--accent); font-size: 11px; font-style: normal; font-weight: 800; }
+.copilot-suggestion-queue > article > div { display: flex; gap: 5px; }
+.copilot-suggestion-queue > article > div button { min-height: 30px; padding: 0 8px; display: flex; align-items: center; gap: 4px; border: 1px solid var(--line); border-radius: 7px; font-size: 9px; }
+.copilot-suggestion-queue > article > div button:last-child { border-color: var(--accent); background: var(--accent); color: var(--canvas); }
+.copilot-suggestion-queue > article > div button:hover { transform: translateY(-1px); }
+.copilot-impact > button { width: 100%; min-height: 59px; padding: 9px 13px; display: grid; grid-template-columns: 1fr auto 14px; align-items: center; gap: 8px; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); text-align: left; }
+.copilot-impact > button:hover { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
+.copilot-impact > button span { display: grid; gap: 2px; }
+.copilot-impact > button b { font-size: 10px; }
+.copilot-impact > button small { color: var(--muted); font-size: 9px; }
+.copilot-impact > button em { color: var(--accent); font-size: 10px; font-style: normal; font-weight: 800; }
+.copilot-impact > button svg { width: 13px; color: var(--muted); }
+.copilot-impact > section { margin: 12px; padding: 12px; display: grid; grid-template-columns: 27px 1fr; align-items: center; gap: 8px; border-radius: 9px; background: color-mix(in srgb, var(--signal) 10%, var(--panel)); }
+.copilot-impact > section > svg { width: 15px; color: var(--signal); }
+.copilot-impact > section span { display: grid; gap: 2px; }
+.copilot-impact > section b { font-size: 9px; }
+.copilot-impact > section small { color: var(--muted); font-size: 8px; }
+
+/* Legacy overview pages predate theme tokens; keep their layouts and map dark mode semantically. */
+html[data-theme="dark"] .ops-dashboard,
+html[data-theme="dark"] .signal-dashboard,
+html[data-theme="dark"] .client-dashboard,
+html[data-theme="dark"] .opportunity-dashboard,
+html[data-theme="dark"] .decision-dashboard { background: var(--canvas); color: var(--ink); }
+
+html[data-theme="dark"] :is(.ops-metrics, .ops-table-card, .ops-detail, .ops-jobs, .ops-search,
+  .signal-stream, .signal-pulse, .signal-agents, .signal-live,
+  .client-summary article:not(.client-feature), .client-portfolio, .client-commitments, .client-activity,
+  .opportunity-toolbar, .opportunity-list, .opportunity-detail, .opportunity-enrichment,
+  .decision-topbar, .decision-queue, .decision-review, .decision-evidence) {
+  background: var(--panel); color: var(--ink); border-color: var(--line);
+}
+
+html[data-theme="dark"] :is(.ops-metrics article, .ops-table-card > header, .ops-jobs > header, .ops-detail > header,
+  .ops-table-head, .ops-table-row, .ops-table-card > footer, .ops-detail dl, .ops-detail dl div,
+  .signal-stream > header, .signal-pulse > header, .signal-agents > header, .signal-stream > button, .signal-agents > button,
+  .client-portfolio > header, .client-commitments > header, .client-activity > header, .client-portfolio > button,
+  .client-commitments > button, .client-activity > button, .opportunity-list > button, .opportunity-detail > header,
+  .opportunity-facts, .opportunity-facts span, .opportunity-enrichment > header, .opportunity-enrichment > button,
+  .decision-topbar, .decision-queue > header, .decision-queue > button, .decision-review > header,
+  .decision-compare article, .decision-reason, .decision-evidence > header, .decision-evidence > button,
+  .decision-evidence > section dl div) { border-color: var(--line); }
+
+html[data-theme="dark"] :is(.ops-table-head, .ops-table-row:hover, .ops-jobs > button:hover,
+  .signal-stream > button:hover, .signal-agents > button:hover,
+  .client-portfolio > button:hover, .client-commitments > button:hover, .client-activity > button:hover,
+  .opportunity-list > button:hover, .opportunity-enrichment > button:hover,
+  .decision-topbar nav button:hover, .decision-queue > button:hover, .decision-evidence > button:hover) {
+  background: color-mix(in srgb, var(--accent) 7%, var(--panel));
+}
+
+html[data-theme="dark"] :is(.ops-table-row.is-selected, .signal-stream > button.is-active,
+  .client-portfolio > button.is-active, .opportunity-list > button.is-active,
+  .decision-queue > button.is-active, .decision-compare article.is-proposed) {
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel)) !important;
+  color: var(--ink);
+}
+
+html[data-theme="dark"] :is(.ops-page-head small, .ops-table-card header span, .ops-person small, .ops-table-row time,
+  .ops-table-card > footer, .ops-detail > header > span, .ops-detail-person p, .ops-detail dt, .ops-jobs small,
+  .signal-heading p, .signal-live small, .signal-stream small, .signal-pulse header span, .signal-agents small,
+  .client-head p, .client-summary article > span, .client-summary article > small, .client-portfolio header span,
+  .client-portfolio small, .client-commitments small, .client-activity small,
+  .opportunity-main > header p, .opportunity-toolbar nav button, .opportunity-list p, .opportunity-list > button > div small,
+  .opportunity-detail > article p, .opportunity-facts small, .opportunity-enrichment header span, .opportunity-enrichment small,
+  .decision-topbar nav button, .decision-queue > header small, .decision-queue > button em,
+  .decision-review > header > span, .decision-compare article span, .decision-reason > p,
+  .decision-evidence > header span, .decision-evidence > button small, .decision-evidence dt) { color: var(--muted); }
+
+html[data-theme="dark"] .ops-detail-person > i,
+html[data-theme="dark"] .ops-person > i,
+html[data-theme="dark"] .client-portfolio > button > i,
+html[data-theme="dark"] .client-commitments > button > i,
+html[data-theme="dark"] .client-activity > button > svg,
+html[data-theme="dark"] .opportunity-list > button > i,
+html[data-theme="dark"] .opportunity-enrichment > button > i,
+html[data-theme="dark"] .decision-queue > button > i,
+html[data-theme="dark"] .decision-compare article,
+html[data-theme="dark"] .decision-receipt {
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel)); color: var(--accent);
+}
+
+html[data-theme="dark"] .opportunity-facts { background: color-mix(in srgb, var(--panel) 94%, var(--accent)); }
+html[data-theme="dark"] .opportunity-enrichment > footer { background: color-mix(in srgb, var(--signal) 11%, var(--panel)); }
+html[data-theme="dark"] .opportunity-enrichment > footer p { color: var(--muted); }
+html[data-theme="dark"] .decision-topbar label { border-color: var(--line); background: color-mix(in srgb, var(--panel) 94%, var(--canvas)); }
+html[data-theme="dark"] .decision-compare article { color: var(--ink); }
+html[data-theme="dark"] .inbx-matching > main > aside {
+  background: color-mix(in srgb, var(--panel) 62%, black);
+  color: var(--ink);
+  border: 1px solid var(--line);
+}
+html[data-theme="dark"] .inbx-matching > main > aside :is(small, p) { color: var(--muted); }
+html[data-theme="dark"] .inbx-matching > main > aside blockquote { background: color-mix(in srgb, var(--accent) 9%, var(--panel)); }
+html[data-theme="dark"] .inbx-matching > main > aside button { background: var(--accent); color: var(--canvas); }
+
+@media (max-width: 1050px) {
+  .inbox-overview-head, .task-overview-main > header, .copilot-overview-main > header { grid-template-columns: 1fr auto; }
+  .inbox-overview-head label, .task-overview-main > header label, .copilot-overview-main > header label { grid-row: 2; grid-column: 1 / 3; }
+  .inbox-overview-metrics, .journal-overview-metrics, .task-overview-metrics, .research-overview-metrics, .copilot-overview-metrics { grid-template-columns: repeat(2, 1fr); }
+  .journal-overview-metrics article:nth-child(2), .task-overview-metrics article:nth-child(2), .research-overview-metrics article:nth-child(2) { border-right: 0; }
+  .journal-overview-metrics article:nth-child(-n+2), .task-overview-metrics article:nth-child(-n+2), .research-overview-metrics article:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+}
+
+@media (max-width: 820px) {
+  .inbox-overview, .journal-overview, .task-overview, .copilot-overview { display: block; }
+  .inbox-overview .inbox-appbar, .journal-overview .journal-rail, .task-overview-sidebar, .copilot-overview .copilot-sidebar { display: none; }
+  .inbox-overview-main, .journal-overview-main, .task-overview-main, .research-overview .research-overview-main, .copilot-overview-main { padding: 22px 18px 90px; }
+  .inbox-overview-grid, .journal-overview-grid, .task-overview-grid, .research-overview-grid, .copilot-overview-grid { grid-template-columns: 1fr; }
+  .journal-change-feed, .journal-overview-followup, .research-projects { grid-row: auto; grid-column: auto; }
+  .journal-overview .journal-head, .research-overview-main > header { align-items: flex-start; flex-direction: column; }
+}
+
+@media (max-width: 560px) {
+  .inbox-overview-main, .journal-overview-main, .task-overview-main, .research-overview .research-overview-main, .copilot-overview-main { padding: 18px 12px 84px; }
+  .inbox-overview-head, .task-overview-main > header, .copilot-overview-main > header { display: flex; align-items: stretch; flex-direction: column; }
+  .inbox-overview-head label, .task-overview-main > header label, .copilot-overview-main > header label { order: 3; }
+  .inbox-overview-head > button, .task-overview-main > header > button, .copilot-overview-main > header > button { justify-content: center; }
+  .inbox-overview-metrics, .journal-overview-metrics, .task-overview-metrics, .research-overview-metrics, .copilot-overview-metrics { grid-template-columns: 1fr 1fr; }
+  .inbox-response-band > div i:nth-child(-n+2) { display: none; }
+  .inbox-overview-threads > button { grid-template-columns: 34px minmax(0, 1fr) 15px; }
+  .inbox-overview-threads > button > div { display: none; }
+  .journal-overview .journal-head { padding-bottom: 16px; }
+  .journal-head-actions { width: 100%; justify-content: space-between; }
+  .journal-change-feed > button { grid-template-columns: 8px minmax(0, 1fr) 14px; padding: 10px 0; }
+  .journal-change-feed time { display: none; }
+  .task-overview-runs > button { grid-template-columns: 30px minmax(0, 1fr) auto 14px; }
+  .task-overview-runs time { display: none; }
+  .research-projects > button { grid-template-columns: 30px minmax(0, 1fr) 14px; }
+  .research-projects > button > div { display: none; }
+  .copilot-suggestion-queue > article { grid-template-columns: 30px 1fr auto; }
+  .copilot-suggestion-queue > article > em { display: none; }
+  .copilot-suggestion-queue > article > div { grid-column: 2 / 4; justify-content: flex-end; }
+}

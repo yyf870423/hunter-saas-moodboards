@@ -1,10 +1,18 @@
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useEffect, useMemo, useState } from "react";
 import { boardBySlug } from "./data/boards";
 import { Catalog } from "./components/Catalog";
 import { BoardHeader } from "./components/BoardHeader";
 
 const MainMoodboard = lazy(() => import("./layouts/MainMoodboard").then((module) => ({ default: module.MainMoodboard })));
-const ComponentLab = lazy(() => import("./components/ComponentLab").then((module) => ({ default: module.ComponentLab })));
+const ExperiencePage = lazy(() => import("./experiences/ExperiencePage").then((module) => ({ default: module.ExperiencePage })));
+
+function readTheme(slug) {
+  const requested = new URLSearchParams(window.location.search).get("theme");
+  if (requested === "light" || requested === "dark") return requested;
+  const stored = window.localStorage.getItem(`hunter-moodboard-theme:${slug}`);
+  if (stored === "light" || stored === "dark") return stored;
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+}
 
 export function App() {
   const slug = document.body.dataset.board;
@@ -15,26 +23,44 @@ export function App() {
   const board = boardBySlug[slug];
   if (!board) return <div className="fatal-state">未找到 Moodboard。</div>;
 
-  const style = {
-    "--accent": board.accent,
-    "--signal": board.signal,
-    "--canvas": board.canvas,
-    "--ink": board.ink,
-    "--panel": board.panel,
-    "--line": board.line,
-    "--muted": board.muted,
-    "--radius": board.radius,
-    "--theme-font": board.font,
-    "--display-font": board.displayFont,
+  const [theme, setTheme] = useState(() => readTheme(slug));
+  const changeTheme = (nextTheme) => {
+    setTheme(nextTheme);
+    const url = new URL(window.location.href);
+    if (url.searchParams.has("theme")) {
+      url.searchParams.set("theme", nextTheme);
+      window.history.replaceState({}, "", url);
+    }
   };
+  useEffect(() => {
+    window.localStorage.setItem(`hunter-moodboard-theme:${slug}`, theme);
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.style.colorScheme = theme;
+  }, [slug, theme]);
+
+  const style = useMemo(() => {
+    const palette = theme === "dark" ? board.dark : board;
+    return {
+      "--accent": palette.accent,
+      "--signal": palette.signal,
+      "--canvas": palette.canvas,
+      "--ink": palette.ink,
+      "--panel": palette.panel,
+      "--line": palette.line,
+      "--muted": palette.muted,
+      "--radius": board.radius,
+      "--theme-font": board.font,
+      "--display-font": board.displayFont,
+    };
+  }, [board, theme]);
 
   return (
-    <div className={`board theme-${board.slug} view-${view}`} style={style}>
-      <BoardHeader board={board} view={view} />
+    <div className={`board theme-${board.slug} view-${view}`} data-theme={theme} style={style}>
+      <BoardHeader board={board} view={view} theme={theme} onThemeChange={changeTheme} />
       <main className="board-content">
         <Suspense fallback={<div className="page-loading"><i /><span>正在载入设计方案</span></div>}>
           {view === "main" && <MainMoodboard board={board} />}
-          {view === "components" && <ComponentLab board={board} />}
+          {view !== "main" && <ExperiencePage board={board} view={view} />}
         </Suspense>
       </main>
     </div>

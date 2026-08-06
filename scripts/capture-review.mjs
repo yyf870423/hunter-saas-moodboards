@@ -1,44 +1,53 @@
 import { chromium } from "@playwright/test";
 import { mkdir, readFile, rm } from "node:fs/promises";
 import { join } from "node:path";
+import { boards, viewMeta } from "../src/data/boards.js";
 
 const baseUrl = process.env.REVIEW_BASE_URL || "http://127.0.0.1:4173/hunter-saas-moodboards/";
 const output = process.env.REVIEW_OUTPUT || "/tmp/hunter-moodboard-review";
-const boards = [
-  "precision-desk", "command-center", "human-studio", "kinetic-blueprint", "physical-telemetry",
-  "institutional-trust", "expedition-search", "guided-service", "teamwork-fabric", "pattern-library",
-];
+const fullMatrix = process.env.REVIEW_FULL === "1";
+const profiles = fullMatrix
+  ? [
+      { name: "desktop", viewport: { width: 1440, height: 900 } },
+      { name: "ipad", viewport: { width: 834, height: 1194 } },
+      { name: "iphone", viewport: { width: 390, height: 844 } },
+    ]
+  : [{ name: "desktop", viewport: { width: 1440, height: 900 } }];
+const themes = ["light", "dark"];
+const views = Object.keys(viewMeta);
+
+function route(board, view, theme) {
+  const suffix = view === "main" ? "" : viewMeta[view].file;
+  return `${baseUrl}boards/${board}/${suffix}?theme=${theme}`;
+}
 
 await rm(output, { recursive: true, force: true });
 await mkdir(output, { recursive: true });
 const browser = await chromium.launch({ headless: true });
-const profiles = [
-  { name: "desktop", viewport: { width: 1440, height: 900 }, views: ["main", "components"], thumbHeight: 430 },
-  { name: "ipad", viewport: { width: 834, height: 1194 }, views: ["main", "components"], thumbHeight: 520 },
-  { name: "iphone", viewport: { width: 390, height: 844 }, views: ["main", "components"], thumbHeight: 620 },
-];
 
 for (const profile of profiles) {
-  for (const view of profile.views) {
-    const page = await browser.newPage({ viewport: profile.viewport, deviceScaleFactor: 1 });
-    const suffix = view === "main" ? "" : `${view}.html`;
-    for (const board of boards) {
-      await page.goto(`${baseUrl}boards/${board}/${suffix}`, { waitUntil: "networkidle" });
-      await page.screenshot({ path: join(output, `${profile.name}-${view}-${board}.png`), fullPage: true });
-    }
-    await page.close();
+  const page = await browser.newPage({ viewport: profile.viewport, deviceScaleFactor: 1 });
+  for (const board of boards) {
+    for (const theme of themes) {
+      for (const view of views) {
+        const name = `${profile.name}-${board.slug}-${theme}-${view}.png`;
+        await page.goto(route(board.slug, view, theme), { waitUntil: "networkidle" });
+        await page.screenshot({ path: join(output, name), fullPage: true });
+      }
 
-    const cards = [];
-    for (const board of boards) {
-      const png = await readFile(join(output, `${profile.name}-${view}-${board}.png`));
-      cards.push(`<figure><figcaption>${board}</figcaption><img src="data:image/png;base64,${png.toString("base64")}"></figure>`);
+      const cards = [];
+      for (const view of views) {
+        const png = await readFile(join(output, `${profile.name}-${board.slug}-${theme}-${view}.png`));
+        cards.push(`<figure><figcaption>${viewMeta[view].short}</figcaption><img src="data:image/png;base64,${png.toString("base64")}"></figure>`);
+      }
+      const sheet = await browser.newPage({ viewport: { width: 1440, height: 1000 }, deviceScaleFactor: 1 });
+      await sheet.setContent(`<style>html{background:#0c0d0f;color:#fff;font:12px Inter,Arial}body{margin:18px;display:grid;grid-template-columns:repeat(2,1fr);gap:14px}figure{margin:0;padding:7px;background:#17191d;border:1px solid #30333a}figcaption{padding:3px 2px 8px}img{display:block;width:100%;height:390px;object-fit:cover;object-position:top}</style>${cards.join("")}`);
+      await sheet.screenshot({ path: join(output, `${profile.name}-${board.slug}-${theme}-contact-sheet.png`), fullPage: true });
+      await sheet.close();
     }
-    const contactPage = await browser.newPage({ viewport: { width: 1200, height: 900 }, deviceScaleFactor: 1 });
-    await contactPage.setContent(`<style>html{background:#111;color:#fff;font:12px Arial}body{margin:20px;display:grid;grid-template-columns:repeat(${profile.name === "desktop" ? 2 : 4},1fr);gap:16px}figure{margin:0;background:#222;padding:8px}figcaption{padding:3px 0 8px}img{display:block;width:100%;height:${profile.thumbHeight}px;object-fit:cover;object-position:top}</style>${cards.join("")}`);
-    await contactPage.screenshot({ path: join(output, `${profile.name}-${view}-contact-sheet.png`), fullPage: true });
-    await contactPage.close();
   }
+  await page.close();
 }
 
 await browser.close();
-console.log(output);
+console.log(`${output} (${profiles.length * boards.length * themes.length * views.length} screenshots)`);

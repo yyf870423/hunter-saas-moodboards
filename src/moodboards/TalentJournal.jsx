@@ -15,23 +15,19 @@ const timeline = [
 ];
 
 export function TalentJournalDashboard() {
-  const [person, setPerson] = useState(0);
   const [toast, setToast] = useState("");
-  const [expanded, setExpanded] = useState(0);
-  const current = candidates[person];
+  const [range, setRange] = useState("本周");
 
   return (
-    <div className="journal-dashboard">
+    <div className="journal-dashboard journal-overview">
       <aside className="journal-rail"><b>H</b><nav>{[BookOpenText, Search, CalendarDays, Sparkles].map((Icon, index) => <button key={index} className={index === 0 ? "is-active" : ""} onClick={() => setToast(["人才纪事", "搜索", "日程", "Agent"][index])}><Icon /></button>)}</nav><span>于</span></aside>
-      <main className="journal-main">
-        <header className="journal-head"><div><small>NOTION × GRANOLA · TALENT JOURNAL</small><h1>人才纪事</h1><p>保留每次变化的背景，让下一次沟通从完整上下文开始。</p></div><button onClick={() => setToast("新记录编辑器已打开")}><Plus />添加记录</button></header>
-
-        <div className="journal-layout">
-          <aside className="journal-people"><label><Search /><input placeholder="搜索人才" /></label>{candidates.map((item, index) => <button key={item.name} className={person === index ? "is-active" : ""} onClick={() => setPerson(index)}><i>{item.initials}</i><span><b>{item.name}</b><small>{item.role}</small></span></button>)}</aside>
-          <section className="journal-story"><header><i>{current.initials}</i><div><span>候选人档案</span><h2>{current.name}</h2><p>{current.role} · {current.company}</p></div><button onClick={() => setToast("候选人操作菜单已打开")}><MoreHorizontal /></button></header><div className="journal-facts"><span><small>当前状态</small><b>开放机会</b></span><span><small>匹配岗位</small><b>3 个</b></span><span><small>最近联系</small><b>今天</b></span></div>
-            <div className="journal-timeline">{timeline.map((item, index) => <article key={item.title} className={expanded === index ? "is-expanded" : ""}><time>{item.date}</time><i /><button onClick={() => setExpanded(expanded === index ? -1 : index)}><span>{item.type}</span><h3>{item.title}</h3><AnimatePresence initial={false}>{expanded === index && <motion.p initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }}>{item.body}</motion.p>}</AnimatePresence><small>{expanded === index ? "收起内容" : "展开内容"}</small></button></article>)}</div>
-          </section>
-          <aside className="journal-followup"><header><h2>下一步</h2><span>2 项</span></header><button onClick={() => setToast("跟进任务已完成")}><i><Check /></i><span><b>发送岗位资料</b><small>今天 16:00 前</small></span></button><button onClick={() => setToast("已打开日程安排")}><i><Clock3 /></i><span><b>安排下一次沟通</b><small>本周内</small></span></button><div><MessageSquareText /><p>上次沟通重点：团队方向、技术自主权、汇报对象。</p></div></aside>
+      <main className="journal-main journal-overview-main">
+        <header className="journal-head"><div><small>NOTION × GRANOLA · TALENT JOURNAL</small><h1>人才动态概览</h1><p>集中查看人才变化、沟通节奏和待跟进事项。</p></div><div className="journal-head-actions"><nav>{["本周", "本月"].map(item => <button key={item} className={range === item ? "is-active" : ""} onClick={() => setRange(item)}>{item}</button>)}</nav><button onClick={() => setToast("新记录编辑器已打开")}><Plus />添加记录</button></div></header>
+        <section className="journal-overview-metrics">{[["新增人才动态", "18", "+6"], ["需要跟进", "7", "今天 3 项"], ["重新开放机会", "4", "+2"], ["本周沟通", "26", "完成 81%"]].map(([label, value, note]) => <article key={label}><span>{label}</span><strong>{value}</strong><small>{note}</small></article>)}</section>
+        <div className="journal-overview-grid">
+          <section className="journal-change-feed"><header><div><h2>重要人才变化</h2><span>{range} · 12 条</span></div><button onClick={() => setToast("已打开全部人才动态")}>查看全部<ArrowRight /></button></header>{timeline.map((item, index) => <button key={item.title} onClick={() => setToast(`已打开动态：${item.title}`)}><time>{item.date}</time><i className={`tone-${index}`} /><span><small>{item.type}</small><b>{item.title}</b><p>{item.body}</p></span><ArrowRight /></button>)}</section>
+          <section className="journal-talent-list"><header><div><h2>近期活跃人才</h2><span>按最近变化排序</span></div><button onClick={() => setToast("人才筛选已打开")}><Search />筛选</button></header>{candidates.map((item, index) => <button key={item.name} onClick={() => setToast(`已打开${item.name}的候选人详情`)}><i>{item.initials}</i><span><b>{item.name}</b><small>{item.role} · {item.company}</small></span><em>{["今天", "昨天", "3 天前", "本周"][index]}</em><ArrowRight /></button>)}</section>
+          <aside className="journal-followup journal-overview-followup"><header><h2>今日跟进</h2><span>3 项</span></header>{[["发送岗位资料", "林昊 · 16:00 前"], ["确认下轮沟通", "周雨澄 · 今天"], ["更新职业状态", "陈松 · 今天"]].map(([title, meta], index) => <button key={title} onClick={() => setToast(`${title}已标记完成`)}><i>{index === 0 ? <MessageSquareText /> : index === 1 ? <Clock3 /> : <Check />}</i><span><b>{title}</b><small>{meta}</small></span></button>)}<div><BookOpenText /><p>本周重点：优先处理重新开放机会的人才，并保留每次沟通背景。</p></div></aside>
         </div>
       </main>
       <AnimatePresence>{toast && <motion.div className="journal-toast" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><Check /><span>{toast}</span><button onClick={() => setToast("")}><X /></button></motion.div>}</AnimatePresence>

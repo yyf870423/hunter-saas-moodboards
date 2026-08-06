@@ -2,7 +2,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Checkbox, Dialog, DropdownMenu, Popover, Slider, Switch, Tabs } from "radix-ui";
 import {
-  Archive, CalendarDays, Check, ChevronDown, CircleAlert, Clock3, FileText,
+  Archive, ArrowRight, CalendarDays, Check, ChevronDown, CircleAlert, Clock3, FileText,
   Inbox, LoaderCircle, Mail, MessageSquareText, MoreHorizontal, Paperclip,
   Phone, Plus, Search, Send, Smile, Upload, UserRound, UsersRound, X,
 } from "lucide-react";
@@ -15,21 +15,18 @@ const threads = [
 ];
 
 export function ConversationDeskDashboard() {
-  const [active, setActive] = useState(0);
-  const [message, setMessage] = useState("");
-  const [sent, setSent] = useState([]);
   const [toast, setToast] = useState("");
-  const current = threads[active];
-  const send = () => { if (message.trim()) { setSent([...sent, message.trim()]); setMessage(""); setToast("消息已加入发送队列"); } };
+  const [scope, setScope] = useState("全部");
 
   return (
-    <div className="inbox-dashboard">
+    <div className="inbox-dashboard inbox-overview">
       <aside className="inbox-appbar"><b>H</b>{[Inbox, UsersRound, CalendarDays, FileText].map((Icon, index) => <button key={index} className={index === 0 ? "is-active" : ""} onClick={() => setToast(["收件箱", "联系人", "日程", "资料"][index])}><Icon /></button>)}<span>于</span></aside>
-      <aside className="inbox-list"><header><div><small>共享收件箱</small><h1>人才沟通</h1></div><button onClick={() => setToast("新会话窗口已打开")}><Plus /></button></header><label><Search /><input placeholder="搜索会话" /></label><nav><button className="is-active" onClick={() => setToast("正在查看全部会话")}>全部 <em>12</em></button><button onClick={() => setToast("正在查看未读会话")}>未读 <em>2</em></button></nav>{threads.map((thread, index) => <button key={thread.name} className={active === index ? "is-active" : ""} onClick={() => setActive(index)}><i>{thread.name[0]}</i><span><b>{thread.name}<time>{thread.time}</time></b><small>{thread.role}</small><p>{thread.preview}</p></span>{thread.unread > 0 && <em>{thread.unread}</em>}</button>)}</aside>
-
-      <main className="inbox-conversation"><header><i>{current.name[0]}</i><div><h2>{current.name}</h2><p>{current.role} · 在线</p></div><button onClick={() => setToast("正在发起电话")}><Phone /></button><button onClick={() => setToast("已打开会话操作")}><MoreHorizontal /></button></header><section><time>今天</time><div className="inbox-message is-received"><p>你好，之前提到的具身智能算法负责人岗位，团队刚补充了更完整的信息。</p><small>11:31</small></div><div className="inbox-message is-sent"><p>可以的，我对团队方向有兴趣，周三下午方便沟通。</p><small>11:36 · 已读</small></div><div className="inbox-message is-received"><p>{current.preview}</p><small>{current.time}</small></div>{sent.map((item, index) => <motion.div key={`${item}-${index}`} className="inbox-message is-sent" initial={{ opacity: 0, y: 12, scale: .98 }} animate={{ opacity: 1, y: 0, scale: 1 }}><p>{item}</p><small>刚刚 · 发送中</small></motion.div>)}</section><footer><textarea value={message} onChange={(e) => setMessage(e.target.value)} onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); send(); } }} placeholder="输入消息，Enter 发送" /><div><span><button onClick={() => setToast("已打开附件选择")}><Paperclip /></button><button onClick={() => setToast("已打开表情选择")}><Smile /></button></span><button className="inbox-send" onClick={send} disabled={!message.trim()}><Send />发送</button></div></footer></main>
-
-      <aside className="inbox-context"><header><h2>候选人信息</h2><button onClick={() => setToast("已收起信息栏")}><X /></button></header><i>{current.name[0]}</i><h3>{current.name}</h3><p>{current.role}</p><dl><div><dt>当前公司</dt><dd>穹境机器人</dd></div><div><dt>流程阶段</dt><dd>技术复试</dd></div><div><dt>最近沟通</dt><dd>今天</dd></div></dl><button onClick={() => setToast("已打开候选人详情")}>查看完整资料</button><section><h4>下一步</h4><button onClick={() => setToast("已创建沟通日程")}><CalendarDays /><span><b>安排沟通</b><small>周三下午</small></span></button></section></aside>
+      <main className="inbox-overview-main">
+        <header className="inbox-overview-head"><div><small>FRONT × INTERCOM · COMMUNICATION</small><h1>沟通工作台</h1><p>统一查看待回复会话、沟通节奏和下一步行动。</p></div><label><Search /><input placeholder="搜索候选人或会话" /></label><button onClick={() => setToast("新会话窗口已打开")}><Plus />新建会话</button></header>
+        <section className="inbox-overview-metrics">{[["待回复", "12", "其中 4 条超过 2 小时"], ["今日会话", "36", "较昨日 +8"], ["已安排沟通", "9", "未来 7 天"], ["平均响应", "18 分钟", "目标 30 分钟内"]].map(([label, value, note], index) => <article key={label} className={`tone-${index}`}><span>{label}</span><strong>{value}</strong><small>{note}</small></article>)}</section>
+        <section className="inbox-response-band"><header><div><h2>响应节奏</h2><span>过去 8 小时</span></div><nav>{["全部", "未读", "超时"].map(item => <button key={item} className={scope === item ? "is-active" : ""} onClick={() => setScope(item)}>{item}</button>)}</nav></header><div>{[42, 58, 34, 72, 65, 88, 76, 92].map((value, index) => <i key={index} style={{ height: `${value}%` }}><span>{index + 9}:00</span></i>)}</div></section>
+        <div className="inbox-overview-grid"><section className="inbox-overview-threads"><header><div><h2>优先会话</h2><span>按等待时间排序</span></div><button onClick={() => setToast("已打开全部会话")}>查看全部<ArrowRight /></button></header>{threads.map((thread, index) => <button key={thread.name} onClick={() => setToast(`已打开与${thread.name}的会话`)}><i>{thread.name[0]}</i><span><b>{thread.name}</b><small>{thread.role}</small><p>{thread.preview}</p></span><div><time>{thread.time}</time>{thread.unread > 0 && <em>{thread.unread} 条未读</em>}</div><ArrowRight /></button>)}</section><aside className="inbox-overview-actions"><header><h2>下一步行动</h2><span>5 项</span></header>{[["安排候选人沟通", "林昊 · 周三下午", CalendarDays], ["发送岗位资料", "周雨澄 · 今天", Send], ["跟进客户反馈", "陈松 · 已等待 1 天", Clock3]].map(([title, meta, Icon]) => <button key={title} onClick={() => setToast(`${title}已完成`)}><i><Icon /></i><span><b>{title}</b><small>{meta}</small></span><Check /></button>)}<footer><MessageSquareText /><p>完成行动后，相关会话和候选人状态会同步更新。</p></footer></aside></div>
+      </main>
       <AnimatePresence>{toast && <motion.div className="inbox-toast" initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }}><Check /><span>{toast}</span><button onClick={() => setToast("")}><X /></button></motion.div>}</AnimatePresence>
     </div>
   );
