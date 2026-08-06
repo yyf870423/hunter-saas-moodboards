@@ -70,10 +70,10 @@ svg { flex: 0 0 auto; }
 .catalog-search input { flex: 1; height: 100%; border: 0; background: transparent; outline: 0; font-size: 13px; }
 .catalog-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1px; background: #bdc4be; border: 1px solid #bdc4be; margin-top: 34px; }
 .catalog-card { min-height: 430px; display: grid; grid-template-columns: 42% 58%; background: #fff; overflow: hidden; }
-.catalog-visual { position: relative; background: var(--card-canvas); color: var(--card-ink); overflow: hidden; min-height: 100%; }
-.catalog-visual img { width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; filter: saturate(.92) contrast(1.03); transition: transform .35s ease, filter .35s ease; }
+.catalog-visual { position: relative; isolation: isolate; background: var(--card-canvas); color: var(--card-ink); overflow: hidden; min-height: 100%; }
+.catalog-visual img { position: relative; z-index: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; display: block; filter: saturate(.92) contrast(1.03); transition: transform .35s ease, filter .35s ease; }
 .catalog-card:hover .catalog-visual img { transform: scale(1.018); filter: saturate(1.04) contrast(1.04); }
-.visual-number { position: absolute; top: 22px; left: 22px; z-index: 2; font: 700 12px/1 Inter,sans-serif; }
+.visual-number { position: absolute; top: 16px; left: 16px; z-index: 5; width: 34px; height: 34px; display: grid; place-items: center; border: 2px solid rgba(255,255,255,.92); border-radius: 7px; background: #141816; color: #fff; box-shadow: 0 5px 16px rgba(8,12,10,.24); font: 750 12px/1 Inter,sans-serif; pointer-events: none; }
 .catalog-card-copy { padding: 34px 30px 26px; display: flex; flex-direction: column; min-width: 0; }
 .catalog-card-title { display: flex; justify-content: space-between; gap: 16px; }
 .catalog-card-title h2 { margin: 0 0 5px; font-size: 24px; }
