@@ -59,7 +59,7 @@ export const boards = [
     premise: "把候选人变化、客户动作和 Agent 发现组织成当天可处理的优先信号。",
     thesis: "科技感来自信息响应和上下文联动，而不是堆叠监控数字。",
     tags: ["优先信号", "情报上下文", "智能响应"],
-    accent: "#0F6CBD",
+    accent: "#2886DE",
     signal: "#5B5FC7",
     canvas: "#FAFAFA",
     ink: "#242424",
