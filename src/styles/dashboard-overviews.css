@@ -197,7 +197,7 @@
 .task-overview-runs > button { width: 100%; min-height: 82px; padding: 11px 14px; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto 68px 16px; gap: 10px; align-items: center; border-top: 1px solid color-mix(in srgb, var(--line) 60%, transparent); text-align: left; }
 .task-overview-runs > button:hover { background: color-mix(in srgb, var(--accent) 6%, var(--panel)); }
 .task-overview-runs > button > i { width: 32px; height: 32px; display: grid; place-items: center; border-radius: 9px; background: color-mix(in srgb, var(--accent) 14%, var(--panel)); color: var(--accent); }
-.task-overview-runs > button > i.status-1 { background: color-mix(in srgb, var(--signal) 14%, var(--panel)); color: var(--signal); }
+.task-overview-runs > button > i.status-1 { background: var(--warning-soft); color: var(--warning); }
 .task-overview-runs svg { width: 15px; }
 .task-overview-runs > button span { min-width: 0; display: grid; gap: 3px; }
 .task-overview-runs > button small, .task-overview-runs > button p, .task-overview-runs time { color: var(--muted); font-size: 9px; }

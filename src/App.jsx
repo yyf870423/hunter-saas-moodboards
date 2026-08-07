@@ -58,6 +58,8 @@ export function App() {
       "--panel": palette.panel,
       "--line": palette.line,
       "--muted": palette.muted,
+      "--warning": theme === "dark" ? "#f3b64e" : "#986006",
+      "--warning-soft": theme === "dark" ? "#3b2b12" : "#fff1d7",
       "--radius": board.radius,
       "--theme-font": board.font,
       "--display-font": board.displayFont,

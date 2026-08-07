@@ -2,39 +2,39 @@
 
 .theme-precision-desk {
   --lane-reserve: #777582;
-  --lane-progress: #6254d9;
+  --lane-progress: #0065ff;
   --lane-success: #2f8a62;
   --lane-failure: #c5544f;
 }
 .theme-command-center {
   --lane-reserve: #827286;
-  --lane-progress: #d23c85;
-  --lane-success: #bd7a22;
+  --lane-progress: #00a897;
+  --lane-success: #2f856f;
   --lane-failure: #cb4c55;
 }
 .theme-human-studio {
-  --lane-reserve: #8e7b6d;
-  --lane-progress: #8f3048;
-  --lane-success: #66834f;
-  --lane-failure: #9b4a3d;
+  --lane-reserve: #737d89;
+  --lane-progress: #1f6658;
+  --lane-success: #397866;
+  --lane-failure: #a84b64;
 }
 .theme-kinetic-blueprint {
-  --lane-reserve: #8a7658;
-  --lane-progress: #9b5b16;
-  --lane-success: #4f8069;
-  --lane-failure: #9c5160;
+  --lane-reserve: #757b86;
+  --lane-progress: #176987;
+  --lane-success: #397d69;
+  --lane-failure: #9c516f;
 }
 .theme-physical-telemetry {
-  --lane-reserve: #84727a;
-  --lane-progress: #d4485f;
+  --lane-reserve: #758088;
+  --lane-progress: #1d6374;
   --lane-success: #397d69;
   --lane-failure: #a94960;
 }
 .theme-institutional-trust {
   --lane-reserve: #7a7289;
-  --lane-progress: #6e3ff3;
+  --lane-progress: #2867e8;
   --lane-success: #2f8567;
-  --lane-failure: #d05f45;
+  --lane-failure: #b54b68;
 }
 .theme-expedition-search {
   --lane-reserve: #776e83;
@@ -44,21 +44,21 @@
 }
 .theme-guided-service {
   --lane-reserve: #7d7488;
-  --lane-progress: #6c4be8;
+  --lane-progress: #24685b;
   --lane-success: #4c8067;
-  --lane-failure: #bf5a52;
+  --lane-failure: #b44f72;
 }
 .theme-teamwork-fabric {
-  --lane-reserve: #89776c;
-  --lane-progress: #d5632d;
-  --lane-success: #3d8068;
-  --lane-failure: #b44d5d;
+  --lane-reserve: #718096;
+  --lane-progress: #0176d3;
+  --lane-success: #0b7f61;
+  --lane-failure: #b54762;
 }
 .theme-pattern-library {
   --lane-reserve: #777386;
-  --lane-progress: #a72d57;
+  --lane-progress: #176f86;
   --lane-success: #478065;
-  --lane-failure: #bc4e70;
+  --lane-failure: #aa4c70;
 }
 
 [data-lane-kind="reserve"] {

@@ -42,6 +42,28 @@ function route(board, view = "main", theme = "light") {
   return `boards/${board}/${file}?theme=${theme}`;
 }
 
+function colorHue(hex) {
+  const value = Number.parseInt(hex.slice(1), 16);
+  const rgb = [value >> 16, (value >> 8) & 255, value & 255].map(
+    (channel) => channel / 255,
+  );
+  const max = Math.max(...rgb);
+  const min = Math.min(...rgb);
+  const delta = max - min;
+  let hue = 0;
+  if (delta) {
+    if (max === rgb[0]) hue = ((rgb[1] - rgb[2]) / delta) % 6;
+    else if (max === rgb[1]) hue = (rgb[2] - rgb[0]) / delta + 2;
+    else hue = (rgb[0] - rgb[1]) / delta + 4;
+    hue = (hue * 60 + 360) % 360;
+  }
+  const lightness = (max + min) / 2;
+  const saturation = delta
+    ? delta / (1 - Math.abs(2 * lightness - 1))
+    : 0;
+  return { hue, saturation };
+}
+
 test.describe.configure({ mode: "serial" });
 
 test("catalog contains ten independent, unnumbered product systems", async ({
@@ -130,6 +152,68 @@ test("a fresh visit defaults to light mode without an explicit theme", async ({
       /active/,
     );
     await context.close();
+  }
+});
+
+test("brand and surface palettes contain no warm design colors", () => {
+  const warmColors = [];
+  const designKeys = ["accent", "signal", "canvas", "ink", "panel", "line", "muted"];
+  for (const board of boards) {
+    for (const [theme, palette] of [["light", board], ["dark", board.dark]]) {
+      for (const key of designKeys) {
+        const color = palette[key].toLowerCase();
+      const { hue, saturation } = colorHue(color);
+      if (hue >= 15 && hue <= 75 && saturation > 0.18) {
+          warmColors.push(`${board.slug}/${theme}/${key}: ${color}`);
+        }
+      }
+    }
+  }
+  expect(warmColors).toEqual([]);
+});
+
+test("warning states keep a distinct warm semantic color", async ({ page }) => {
+  await page.goto(route("precision-desk", "list", "light"));
+  const warning = await page.locator(".board").evaluate((node) =>
+    getComputedStyle(node).getPropertyValue("--warning").trim(),
+  );
+  const { hue, saturation } = colorHue(warning);
+  expect(hue).toBeGreaterThanOrEqual(15);
+  expect(hue).toBeLessThanOrEqual(75);
+  expect(saturation).toBeGreaterThan(0.18);
+});
+
+test("each dashboard and its business pages share one palette", async ({
+  page,
+}) => {
+  const properties = [
+    "--accent",
+    "--signal",
+    "--canvas",
+    "--ink",
+    "--panel",
+    "--line",
+  ];
+  for (const board of boards) {
+    for (const theme of ["light", "dark"]) {
+      await page.goto(route(board.slug, "main", theme));
+      const dashboardPalette = await page.locator(".board").evaluate(
+        (node, names) =>
+          names.map((name) => getComputedStyle(node).getPropertyValue(name)),
+        properties,
+      );
+      for (const view of experienceViews) {
+        await page.goto(route(board.slug, view, theme));
+        const pagePalette = await page.locator(".board").evaluate(
+          (node, names) =>
+            names.map((name) => getComputedStyle(node).getPropertyValue(name)),
+          properties,
+        );
+        expect(pagePalette, `${board.slug}/${view}/${theme}`).toEqual(
+          dashboardPalette,
+        );
+      }
+    }
   }
 });
 
