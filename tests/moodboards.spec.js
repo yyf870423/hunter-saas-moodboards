@@ -81,6 +81,11 @@ test("catalog contains ten independent, unnumbered product systems", async ({
   await expect(page.locator(".catalog-card-number, .board-index")).toHaveCount(
     0,
   );
+  await expect(page.locator(".catalog-grid")).toHaveCSS("column-gap", "24px");
+  await expect(page.locator(".catalog-card").first()).toHaveCSS(
+    "border-top-width",
+    "1px",
+  );
   await page.locator(".catalog-search input").fill("智能");
   expect(await page.locator(".catalog-card").count()).toBeGreaterThan(0);
 });
