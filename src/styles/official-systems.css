@@ -1,0 +1,341 @@
+/* Official design-system mapping. Business layouts stay independent per moodboard. */
+
+.board {
+  letter-spacing: 0;
+  background-color: var(--canvas);
+  background-image: var(--ambient);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+.board-header {
+  border-color: var(--line);
+  box-shadow: var(--shadow-low);
+}
+
+.board :is(button, input, textarea, select, option, table, th, td, dialog) {
+  letter-spacing: 0;
+}
+
+:is(
+  .opsx-page, .cmdx-page, .clix-page, .jnlx-page, .inbx-page,
+  .wbx-page, .rsx-page, .cpx-page, .oppx-page, .dcx-page,
+  .ops-dashboard, .signal-dashboard, .client-dashboard, .journal-dashboard,
+  .inbox-dashboard, .task-dashboard, .research-dashboard, .copilot-dashboard,
+  .opportunity-dashboard, .decision-dashboard
+) {
+  background-color: transparent;
+  background-image: none;
+  color: var(--ink);
+}
+
+:is(
+  .ops-sidebar, .signal-topbar, .client-sidebar, .journal-rail,
+  .inbox-appbar, .task-overview-sidebar, .research-overview-rail,
+  .copilot-sidebar, .opportunity-sidebar
+) {
+  background: var(--nav);
+  color: var(--on-nav);
+  border-color: color-mix(in srgb, var(--on-nav) 18%, transparent);
+}
+
+:is(
+  .ops-sidebar, .signal-topbar, .client-sidebar, .journal-rail,
+  .inbox-appbar, .task-overview-sidebar, .research-overview-rail,
+  .copilot-sidebar, .opportunity-sidebar
+) :is(button, small, span) {
+  color: color-mix(in srgb, var(--on-nav) 72%, transparent);
+}
+
+:is(
+  .ops-sidebar, .signal-topbar, .client-sidebar, .journal-rail,
+  .inbox-appbar, .task-overview-sidebar, .research-overview-rail,
+  .copilot-sidebar, .opportunity-sidebar
+) button:is(:hover, .is-active) {
+  background: color-mix(in srgb, var(--accent) 24%, transparent);
+  color: var(--on-nav);
+}
+
+:is(
+  .ops-metrics, .ops-table-card, .ops-detail, .ops-jobs, .ops-search,
+  .signal-stream, .signal-pulse, .signal-agents, .signal-live,
+  .client-summary article:not(.client-feature), .client-portfolio, .client-commitments, .client-activity,
+  .opportunity-toolbar, .opportunity-list, .opportunity-detail, .opportunity-enrichment,
+  .decision-topbar, .decision-queue, .decision-review, .decision-evidence,
+  .inbox-overview-metrics article, .inbox-overview-threads, .inbox-overview-actions,
+  .task-overview-metrics article, .task-overview-runs, .task-overview-delivery,
+  .research-overview-metrics article, .research-projects, .research-source-health, .research-overview-insights,
+  .copilot-overview-metrics article, .copilot-suggestion-queue, .copilot-impact
+) {
+  background: var(--panel);
+  color: var(--ink);
+  border-color: var(--line);
+  box-shadow: var(--shadow-low);
+}
+
+:is(
+  .ops-metrics article, .ops-table-card > header, .ops-jobs > header, .ops-detail > header,
+  .ops-table-head, .ops-table-row, .ops-table-card > footer, .ops-detail dl, .ops-detail dl div,
+  .signal-stream > header, .signal-pulse > header, .signal-agents > header, .signal-stream > button, .signal-agents > button,
+  .client-portfolio > header, .client-commitments > header, .client-activity > header, .client-portfolio > button,
+  .client-commitments > button, .client-activity > button, .opportunity-list > button, .opportunity-detail > header,
+  .opportunity-facts, .opportunity-facts span, .opportunity-enrichment > header, .opportunity-enrichment > button,
+  .decision-topbar, .decision-queue > header, .decision-queue > button, .decision-review > header,
+  .decision-compare article, .decision-reason, .decision-evidence > header, .decision-evidence > button,
+  .decision-evidence > section dl div
+) {
+  border-color: var(--line);
+}
+
+:is(
+  .ops-table-head, .ops-table-row:hover, .ops-jobs > button:hover,
+  .signal-stream > button:hover, .signal-agents > button:hover,
+  .client-portfolio > button:hover, .client-commitments > button:hover, .client-activity > button:hover,
+  .opportunity-list > button:hover, .opportunity-enrichment > button:hover,
+  .decision-topbar nav button:hover, .decision-queue > button:hover, .decision-evidence > button:hover
+) {
+  background: color-mix(in srgb, var(--accent) 7%, var(--panel));
+}
+
+:is(
+  .ops-table-row.is-selected, .signal-stream > button.is-active,
+  .client-portfolio > button.is-active, .opportunity-list > button.is-active,
+  .decision-queue > button.is-active, .decision-compare article.is-proposed
+) {
+  background: color-mix(in srgb, var(--accent) 14%, var(--panel)) !important;
+  box-shadow: inset 3px 0 var(--accent);
+  color: var(--ink);
+}
+
+:is(
+  .ops-page-head small, .ops-table-card header span, .ops-person small, .ops-table-row time,
+  .ops-table-card > footer, .ops-detail > header > span, .ops-detail-person p, .ops-detail dt, .ops-jobs small,
+  .signal-heading p, .signal-live small, .signal-stream small, .signal-pulse header span, .signal-agents small,
+  .client-head p, .client-summary article > span, .client-summary article > small, .client-portfolio header span,
+  .client-portfolio small, .client-commitments small, .client-activity small,
+  .opportunity-main > header p, .opportunity-toolbar nav button, .opportunity-list p,
+  .opportunity-list > button > div small, .opportunity-detail > article p, .opportunity-facts small,
+  .opportunity-enrichment header span, .opportunity-enrichment small,
+  .decision-topbar nav button, .decision-queue > header small, .decision-queue > button em,
+  .decision-review > header > span, .decision-compare article span, .decision-reason > p,
+  .decision-evidence > header span, .decision-evidence > button small, .decision-evidence dt
+) {
+  color: var(--muted);
+}
+
+:is(
+  .ops-detail-person > i, .ops-person > i,
+  .client-portfolio > button > i, .client-commitments > button > i, .client-activity > button > svg,
+  .opportunity-list > button > i, .opportunity-enrichment > button > i,
+  .decision-queue > button > i, .decision-compare article, .decision-receipt
+) {
+  background: color-mix(in srgb, var(--accent) 12%, var(--panel));
+  color: var(--accent);
+}
+
+:is(
+  .ops-primary, .client-head > button, .journal-head > button,
+  .opportunity-main > header > button, .decision-review > footer button:last-child,
+  .task-overview-main > header > button
+) {
+  background: var(--accent) !important;
+  border-color: var(--accent) !important;
+  color: var(--panel) !important;
+}
+
+:is(input, textarea, button, [tabindex]):focus-visible {
+  outline-color: var(--focus);
+}
+
+.theme-precision-desk {
+  --lane-reserve: #7D818A;
+  --lane-progress: #1868DB;
+  --lane-success: #1F845A;
+  --lane-failure: #C9372C;
+}
+
+.theme-command-center {
+  --lane-reserve: #707070;
+  --lane-progress: #0F6CBD;
+  --lane-success: #107C10;
+  --lane-failure: #C50F1F;
+}
+
+.theme-command-center .signal-focus {
+  background: color-mix(in srgb, var(--accent) 18%, var(--nav));
+  border-color: color-mix(in srgb, var(--accent) 46%, var(--nav));
+  color: var(--on-nav);
+  box-shadow: var(--shadow-high);
+}
+
+.theme-command-center .signal-focus :is(header, dl div) {
+  border-color: color-mix(in srgb, var(--on-nav) 18%, transparent);
+}
+
+.theme-command-center .signal-focus :is(header svg, article > small) {
+  color: var(--signal);
+}
+
+.theme-command-center .signal-focus :is(header em, article > p, dt) {
+  color: color-mix(in srgb, var(--on-nav) 70%, transparent);
+}
+
+.theme-command-center .signal-focus article footer button:last-child,
+.theme-command-center .signal-focus > nav button.is-active,
+.theme-command-center .signal-pulse-chart i {
+  background: var(--accent);
+}
+
+.theme-command-center .signal-pulse-chart i:nth-child(3n) {
+  background: var(--signal);
+}
+
+.theme-command-center .signal-pulse footer strong {
+  color: var(--ink);
+}
+
+.theme-command-center .signal-pulse footer span,
+.theme-command-center :is(.signal-stream > button em, .signal-more, .signal-agents header button) {
+  color: var(--muted);
+}
+
+.theme-human-studio {
+  --lane-reserve: #8A8A8A;
+  --lane-progress: #8051FF;
+  --lane-success: #047B5D;
+  --lane-failure: #C70A24;
+}
+
+.theme-human-studio .client-feature {
+  background: var(--nav) !important;
+  border-color: var(--nav) !important;
+  color: var(--on-nav) !important;
+}
+
+.theme-human-studio .client-feature :is(span, small, a, button),
+.theme-human-studio .client-head small {
+  color: var(--signal) !important;
+}
+
+.theme-human-studio .client-feature p {
+  color: color-mix(in srgb, var(--on-nav) 72%, transparent);
+}
+
+.theme-human-studio .client-sidebar nav button.is-active {
+  background: color-mix(in srgb, var(--signal) 28%, var(--nav));
+  box-shadow: inset 3px 0 var(--signal);
+  color: var(--on-nav);
+}
+
+.theme-kinetic-blueprint {
+  --lane-reserve: #8F8F8F;
+  --lane-progress: #7155FA;
+  --lane-success: #268E6C;
+  --lane-failure: #D7373F;
+}
+
+.theme-kinetic-blueprint .journal-overview-followup {
+  background: var(--panel);
+  color: var(--ink);
+}
+
+.theme-physical-telemetry {
+  --lane-reserve: #79747E;
+  --lane-progress: #6750A4;
+  --lane-success: #2E7D32;
+  --lane-failure: #B3261E;
+}
+
+.theme-institutional-trust {
+  --lane-reserve: #7D7D7D;
+  --lane-progress: #0070F7;
+  --lane-success: #46A758;
+  --lane-failure: #E5484D;
+}
+
+.theme-expedition-search {
+  --lane-reserve: #8D8D8D;
+  --lane-progress: #0F62FE;
+  --lane-success: #24A148;
+  --lane-failure: #DA1E28;
+}
+
+.theme-guided-service {
+  --lane-reserve: #8E8C99;
+  --lane-progress: #3E63DD;
+  --lane-success: #30A46C;
+  --lane-failure: #E5484D;
+}
+
+.theme-teamwork-fabric {
+  --lane-reserve: #706E6B;
+  --lane-progress: #0176D3;
+  --lane-success: #2E844A;
+  --lane-failure: #BA0517;
+}
+
+.theme-pattern-library {
+  --lane-reserve: #818B98;
+  --lane-progress: #0969DA;
+  --lane-success: #1A7F37;
+  --lane-failure: #D1242F;
+}
+
+.theme-institutional-trust .task-overview-sidebar {
+  background: var(--nav);
+  color: var(--on-nav);
+}
+
+.theme-institutional-trust .task-overview-sidebar nav button {
+  color: color-mix(in srgb, var(--on-nav) 68%, transparent);
+}
+
+.theme-institutional-trust .task-overview-sidebar nav button:is(:hover, .is-active) {
+  background: color-mix(in srgb, var(--accent) 26%, transparent);
+  color: var(--on-nav);
+}
+
+.theme-institutional-trust .task-overview-sidebar section {
+  background: color-mix(in srgb, var(--on-nav) 7%, transparent);
+  border-color: color-mix(in srgb, var(--on-nav) 18%, transparent);
+}
+
+.theme-institutional-trust .task-overview-sidebar section :is(small, span) {
+  color: color-mix(in srgb, var(--on-nav) 68%, transparent);
+}
+
+.theme-institutional-trust :is(.task-overview-metrics article, .task-overview-runs, .task-overview-delivery) {
+  box-shadow: var(--shadow-low);
+}
+
+.theme-expedition-search :is(.research-overview-metrics article, .research-projects, .research-source-health, .research-overview-insights) {
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.theme-guided-service :is(.copilot-overview-metrics article, .copilot-suggestion-queue, .copilot-impact) {
+  box-shadow: var(--shadow-low);
+}
+
+.theme-pattern-library :is(.decision-queue, .decision-review, .decision-evidence) {
+  border-radius: 6px;
+  box-shadow: var(--shadow-low);
+}
+
+.theme-pattern-library .decision-topbar > div svg,
+.theme-pattern-library .decision-topbar nav button.is-active,
+.theme-pattern-library .decision-review > header small,
+.theme-pattern-library .decision-evidence > button > svg {
+  color: var(--accent);
+}
+
+.theme-pattern-library .decision-topbar nav button.is-active {
+  border-bottom-color: var(--accent);
+}
+
+@media (max-width: 600px) {
+  .board {
+    background-attachment: scroll;
+  }
+}

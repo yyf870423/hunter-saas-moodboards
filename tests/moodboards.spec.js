@@ -85,6 +85,87 @@ test("catalog contains ten independent, unnumbered product systems", async ({
   expect(await page.locator(".catalog-card").count()).toBeGreaterThan(0);
 });
 
+test("every moodboard is pinned to a complete official design system", async ({
+  page,
+}) => {
+  const paletteKeys = [
+    "accent",
+    "signal",
+    "canvas",
+    "ink",
+    "panel",
+    "line",
+    "muted",
+    "surfaceSubtle",
+    "focus",
+    "nav",
+    "onNav",
+    "shadowLow",
+    "shadowHigh",
+    "ambient",
+  ];
+
+  for (const board of boards) {
+    expect(board.system.name, `${board.slug}: official system`).toBeTruthy();
+    expect(board.system.url, `${board.slug}: official URL`).toMatch(
+      /^https:\/\//,
+    );
+    expect(board.system.package, `${board.slug}: version source`).toBeTruthy();
+    for (const [theme, palette] of [
+      ["light", board],
+      ["dark", board.dark],
+    ]) {
+      for (const key of paletteKeys) {
+        expect(
+          palette[key],
+          `${board.slug}/${theme}: missing ${key}`,
+        ).toBeTruthy();
+      }
+    }
+
+    await page.goto(route(board.slug, "main"));
+    await expect(page.locator(".board")).toHaveAttribute(
+      "data-design-system",
+      board.system.name,
+    );
+    expect(
+      ["normal", "0px"],
+      `${board.slug}: letter spacing must not be tightened`,
+    ).toContain(
+      await page
+        .locator(".board")
+        .evaluate((node) => getComputedStyle(node).letterSpacing),
+    );
+  }
+});
+
+test("official palettes remain visibly diverse and WorkBuddy remains Geist blue", () => {
+  const lightAccents = new Set(
+    boards.map((board) => board.accent.toLowerCase()),
+  );
+  const signalColors = new Set(
+    boards.map((board) => board.signal.toLowerCase()),
+  );
+  expect(lightAccents.size).toBeGreaterThanOrEqual(9);
+  expect(signalColors.size).toBeGreaterThanOrEqual(8);
+
+  const workBuddy = boards.find(
+    (board) => board.slug === "institutional-trust",
+  );
+  expect(workBuddy.system.name).toBe("Vercel Geist");
+  for (const color of [
+    workBuddy.accent,
+    workBuddy.signal,
+    workBuddy.dark.accent,
+    workBuddy.dark.signal,
+  ]) {
+    const { hue, saturation } = colorHue(color);
+    expect(hue).toBeGreaterThanOrEqual(190);
+    expect(hue).toBeLessThanOrEqual(230);
+    expect(saturation).toBeGreaterThan(0.5);
+  }
+});
+
 test("all 480 route/theme/viewport combinations render without runtime errors or document overflow", async ({
   page,
 }) => {
@@ -335,6 +416,29 @@ test("named visual regressions stay removed", async ({ page }) => {
     (node) => getComputedStyle(node).borderRadius,
   );
   expect(radius).not.toBe("50%");
+
+  await page.goto(route("command-center", "main", "dark"));
+  await expect(page.locator(".signal-pulse footer strong").first()).not.toHaveCSS(
+    "color",
+    "rgb(19, 38, 38)",
+  );
+
+  await page.goto(route("human-studio", "main", "light"));
+  await expect(page.locator(".client-feature")).not.toHaveCSS(
+    "background-color",
+    "rgb(27, 59, 50)",
+  );
+
+  await page.goto(route("kinetic-blueprint", "main", "dark"));
+  await expect(page.locator(".journal-overview-followup")).not.toHaveCSS(
+    "background-color",
+    "rgb(255, 255, 255)",
+  );
+
+  await page.goto(route("institutional-trust", "main", "dark"));
+  await expect(
+    page.locator(".task-overview-sidebar nav button.is-active"),
+  ).not.toHaveCSS("color", "rgb(26, 26, 26)");
 });
 
 for (const board of boards) {

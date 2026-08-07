@@ -58,6 +58,13 @@ export function App() {
       "--panel": palette.panel,
       "--line": palette.line,
       "--muted": palette.muted,
+      "--surface-subtle": palette.surfaceSubtle,
+      "--focus": palette.focus,
+      "--nav": palette.nav,
+      "--on-nav": palette.onNav,
+      "--shadow-low": palette.shadowLow,
+      "--shadow-high": palette.shadowHigh,
+      "--ambient": palette.ambient,
       "--warning": theme === "dark" ? "#f3b64e" : "#986006",
       "--warning-soft": theme === "dark" ? "#3b2b12" : "#fff1d7",
       "--radius": board.radius,
@@ -70,6 +77,7 @@ export function App() {
     <div
       className={`board theme-${board.slug} view-${view}`}
       data-theme={theme}
+      data-design-system={board.system.name}
       style={style}
     >
       <BoardHeader

@@ -26,6 +26,34 @@
 
 实现允许使用 Radix Primitives 等成熟无障碍基础组件和 Motion for React，但每套页面必须拥有独立 DOM、状态、样式 token 和动效编排。不能用同一个页面结构换主题色生成十套结果。
 
+### 2.1 官方设计系统采用规则
+
+每套方案必须指定一个**主设计系统**。只要主设计系统已经提供完整的颜色、字体、间距、圆角、阴影、材质、动效、明暗主题和组件状态，就直接采用官方方案，不再为 Hunter 重新发明一套近似规则。
+
+1. **官方语义 token 是唯一真相源。** 页面使用背景、表面、文字、边界、焦点、操作和状态等语义 token，不从官网截图取色，也不在业务 CSS 中临时手写近似颜色。
+2. **官方组件状态直接沿用。** 输入框、下拉框、表格、按钮、Modal、Tooltip、日期控件等已有官方状态时，直接采用其 normal、hover、pressed、focus、selected、disabled、loading 和 error 规则。
+3. **官方材质与动效直接沿用。** 阴影层级、透明材质、遮罩、进出场时长和缓动使用官方定义，不自行拼接多层阴影或装饰渐变。
+4. **真实产品只提供业务参考。** Linear、Ashby、WorkBuddy、Attio 等产品用于确定信息架构、工作模型和页面布局，不能覆盖主设计系统的组件与 token 规范。
+5. **没有公开完整体系时才做受控补充。** 补充规则必须来自被引用产品可重复观察的稳定模式，并在文档中注明来源、适用范围和未采用官方方案的原因；不得以“更好看”为由自由发挥。
+6. **版本可追踪。** 代码中的每套主题必须记录主设计系统、官方文档 URL、采用的包或 token 版本，以及 Hunter 使用的语义映射。
+
+### 2.2 十套官方基线
+
+| 方案 | 主设计系统（直接采用） | Hunter 采用范围 | 真实产品参考（只用于布局） |
+|---|---|---|---|
+| Linear × Ashby 运营台 | [Atlassian Design System](https://atlassian.design/) | Atlassian Light/Dark 语义颜色、紧凑控件、边界、焦点、Popup 与 Overlay 阴影 | Linear 列表层级、Ashby 招聘运营结构 |
+| Raycast × OpenRouter 信号台 | [Fluent 2](https://fluent2.microsoft.design/) | Web Blue 品牌色阶、Neutral 层级、双层阴影、材质、进出场动效与排版 | Raycast 命令反馈、OpenRouter 来源与状态表达 |
+| Attio × Mercury 客户台 | [Shopify Polaris](https://polaris.shopify.com/) | 当前 Light/Dark token、商务表单、Resource List、按钮 bevel、阴影与语义状态 | Attio 对象关系、Mercury 客户服务节奏 |
+| Notion × Granola 人才纪事 | [Adobe Spectrum 2](https://spectrum.adobe.com/) | Spectrum 2 灰阶、Indigo 色阶、内容组件、字段状态、焦点与可访问性 | Notion 内容块、Granola 记录与摘要 |
+| Front × Intercom 沟通台 | [Material 3 Expressive](https://m3.material.io/) | 官方角色色、Surface Container 层级、状态层、触控尺寸、形状与 Motion Physics | Front 共享收件箱、Intercom 会话上下文 |
+| WorkBuddy × Vercel AI 任务空间 | [Vercel Geist](https://vercel.com/geist) | Geist Blue/Gray 完整色阶、两层页面背景、Material、组件、排版和 Grid；整体固定为蓝色体系 | WorkBuddy 的任务列表、连续上下文与宽松蓝色背景光感 |
+| Dovetail × Arc 研究台 | [IBM Carbon for AI](https://carbondesignsystem.com/guidelines/carbon-for-ai/) | Carbon White/G100 主题、结构化数据组件、productive motion，以及 AI 官方蓝紫光感 | Dovetail 证据定位、Arc 研究工作区 |
+| Intercom × Sana 智能副驾 | [Radix Themes](https://www.radix-ui.com/themes/docs/overview/getting-started) | 官方 Indigo + Mauve 明暗色阶、组件状态、透明层、Popover/Dialog 行为 | Intercom Copilot 建议、Sana 来源与后续动作 |
+| Attio × Clay 机会探索 | [Salesforce Lightning Design System](https://www.lightningdesignsystem.com/) | SLDS 语义 token、对象列表、筛选器、可配置列、Inline Edit 和反馈状态 | Attio 对象视图、Clay 多源补全进度 |
+| Primer × Persona 决策桌 | [GitHub Primer](https://primer.style/product/) | Primer Light/Dark 功能 token、表单、Overlay、危险操作、证据状态与响应式布局 | Persona 验证步骤、Stripe 风险与确认层级 |
+
+采用官方系统不等于照搬品牌标识。Hunter 不复制第三方 Logo、商标、专有插图和完整页面，只直接使用其公开设计系统的基础规则与组件行为。
+
 ## 3. 十套成熟组合矩阵
 
 | 编号 | Hunter 场景 | 成熟组合 | 明确采用的设计语言 | 交互与动效来源 | 禁止混入 |
@@ -39,7 +67,7 @@
 | 07 | 研究材料、证据与批注 | **IBM Carbon + Dovetail + Notion** | Carbon 的结构化研究工作区、数据和标签；Dovetail 的研究材料、证据片段和洞察；Notion 的文档块与批注 | Carbon productive motion 为主、expressive motion 只用于完成反馈；Dovetail 的证据定位 | 仿纸张纹理、档案袋装饰、盖章动画 |
 | 08 | 业务上下文中的 AI 建议 | **shadcn/ui(Base UI) + Intercom Copilot + Sana** | shadcn/Base UI 的开放组件和完整状态；Intercom Copilot 的上下文建议；Sana 的知识回答、来源和后续动作 | Base UI 的无障碍 open/close；Intercom 的建议采纳/拒绝；Fluent 的 focus 与 elevation | 独立聊天首页、悬浮魔法按钮、没有依据的自动改写 |
 | 09 | 公司、岗位和人才机会探索 | **Salesforce Lightning + Attio + Clay** | Lightning 的对象列表、筛选、可配置列和行操作；Attio 的对象关系与视图；Clay 的多源补全和逐步丰富 | Lightning 的选择与内联编辑；Clay 的列级运行状态；Atlassian 的 popup/reposition | 连线关系图、无限画布、金融终端式信息墙 |
-| 10 | AI 建议、证据与写入决策 | **IBM Carbon + Stripe Dashboard + Persona** | Carbon 的严谨表单和状态；Stripe 的风险信息、详情与确认层级；Persona 的验证步骤和失败解释 | Carbon 的 productive motion；Stripe 的危险操作确认；Persona 的步骤状态和恢复提示 | 法务文书风、审计终端、红色占主导的恐吓式界面 |
+| 10 | AI 建议、证据与写入决策 | **GitHub Primer + Persona + Stripe Dashboard** | Primer 的严谨表单、Overlay 和语义状态；Stripe 的风险信息、详情与确认层级；Persona 的验证步骤和失败解释 | Primer 的功能 token 与 Overlay 行为；Stripe 的危险操作确认；Persona 的步骤状态和恢复提示 | 法务文书风、审计终端、红色占主导的恐吓式界面 |
 
 每套组合只采用与 Hunter 任务相符的规则，不复制第三方品牌资产、商标、专有插图或完整页面布局。
 
@@ -129,3 +157,4 @@
 12. 每套实现必须能从代码中的 token、组件结构和动效规则回查到本文件的成熟组合，不能出现无来源的临时设计语言。
 13. 每个页面均可切换深浅模式，切换后业务状态不丢失；刷新和跨页面后保持该风格的模式选择。
 14. 自动检查页面及所有 Portal 浮层的计算样式，确认字体、控件外观和交互状态来自对应风格；不得出现系统默认下拉选项、按钮、输入框、日期控件或 Modal 内容。
+15. 每套主题均能追踪到一个主设计系统及其公开文档；主系统已有完整定义的 token、组件状态、阴影、材质或动效不得被临时手写值覆盖。
