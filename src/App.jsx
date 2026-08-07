@@ -3,15 +3,25 @@ import { boardBySlug } from "./data/boards";
 import { Catalog } from "./components/Catalog";
 import { BoardHeader } from "./components/BoardHeader";
 
-const MainMoodboard = lazy(() => import("./layouts/MainMoodboard").then((module) => ({ default: module.MainMoodboard })));
-const ExperiencePage = lazy(() => import("./experiences/ExperiencePage").then((module) => ({ default: module.ExperiencePage })));
+const MainMoodboard = lazy(() =>
+  import("./layouts/MainMoodboard").then((module) => ({
+    default: module.MainMoodboard,
+  })),
+);
+const ExperiencePage = lazy(() =>
+  import("./experiences/ExperiencePage").then((module) => ({
+    default: module.ExperiencePage,
+  })),
+);
 
 function readTheme(slug) {
   const requested = new URLSearchParams(window.location.search).get("theme");
   if (requested === "light" || requested === "dark") return requested;
-  const stored = window.localStorage.getItem(`hunter-moodboard-theme:${slug}`);
+  const stored = window.sessionStorage.getItem(
+    `hunter-moodboard-theme:${slug}`,
+  );
   if (stored === "light" || stored === "dark") return stored;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "light";
 }
 
 export function App() {
@@ -33,7 +43,7 @@ export function App() {
     }
   };
   useEffect(() => {
-    window.localStorage.setItem(`hunter-moodboard-theme:${slug}`, theme);
+    window.sessionStorage.setItem(`hunter-moodboard-theme:${slug}`, theme);
     document.documentElement.dataset.theme = theme;
     document.documentElement.style.colorScheme = theme;
   }, [slug, theme]);
@@ -55,10 +65,26 @@ export function App() {
   }, [board, theme]);
 
   return (
-    <div className={`board theme-${board.slug} view-${view}`} data-theme={theme} style={style}>
-      <BoardHeader board={board} view={view} theme={theme} onThemeChange={changeTheme} />
+    <div
+      className={`board theme-${board.slug} view-${view}`}
+      data-theme={theme}
+      style={style}
+    >
+      <BoardHeader
+        board={board}
+        view={view}
+        theme={theme}
+        onThemeChange={changeTheme}
+      />
       <main className="board-content">
-        <Suspense fallback={<div className="page-loading"><i /><span>正在载入设计方案</span></div>}>
+        <Suspense
+          fallback={
+            <div className="page-loading">
+              <i />
+              <span>正在载入设计方案</span>
+            </div>
+          }
+        >
           {view === "main" && <MainMoodboard board={board} />}
           {view !== "main" && <ExperiencePage board={board} view={view} />}
         </Suspense>

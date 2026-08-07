@@ -24,5 +24,9 @@ const experiences = {
 
 export function ExperiencePage({ board, view }) {
   const Page = experiences[board.slug];
-  return Page ? <Page view={view} /> : <div className="fatal-state">未找到业务页面。</div>;
+  return Page ? (
+    <Page view={view} />
+  ) : (
+    <div className="fatal-state">未找到业务页面。</div>
+  );
 }

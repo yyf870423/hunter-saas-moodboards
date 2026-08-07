@@ -1,13 +1,948 @@
 import { useMemo, useState } from "react";
-import { ArrowRight, Bot, CalendarDays, Check, ChevronDown, CircleAlert, Clock3, FileCheck2, FileText, GripVertical, History, LoaderCircle, MessageSquareText, MoreHorizontal, Pause, Play, Plus, RefreshCw, Search, Send, Square, Trash2, Upload, UserRound, X } from "lucide-react";
-const runs=[{title:"调研智元新创",type:"公司调研",status:"运行中",time:"06:42"},{title:"补全林昊公开资料",type:"信息补全",status:"等待确认",time:"今天"},{title:"解析自动驾驶岗位",type:"岗位解析",status:"已完成",time:"昨天"},{title:"搜索具身智能论文",type:"学术搜索",status:"失败",time:"2 天前"}];
-function WToast({text,close}){return text?<div className="wbx-toast"><Check/><span>{text}</span><button onClick={close}><X/></button></div>:null}
-function WModal({type,close,done}){return <div className="wbx-shade"><section className="wbx-modal" role="dialog"><header><Bot/><div><small>AGENT TASK</small><h2>{type==="new"?"创建 Agent 任务":"删除任务记录"}</h2></div></header>{type==="new"?<><label>任务类型<div><button className="active">公司调研</button><button>岗位解析</button><button>信息补全</button></div></label><label>任务目标<textarea defaultValue="调研智元新创的公司、团队和招聘情况。"/></label></>:<p>删除任务会同时清理对应工作区，结果数据不会删除。</p>}<footer><button onClick={close}>取消</button><button className={type==="new"?"primary":"danger"} onClick={done}>{type==="new"?"启动任务":"确认删除"}</button></footer></section></div>}
-function Agent(){const [messages,setMessages]=useState([{who:"user",text:"调研智元新创，重点看具身智能团队和招聘情况。"},{who:"agent",text:"已制定调研范围。我会搜索公司、团队、岗位和公开访谈，并核验关键结论。"}]);const [input,setInput]=useState("");const [running,setRunning]=useState(true);const [toast,setToast]=useState("");const send=()=>{if(!input.trim())return;setMessages(v=>[...v,{who:"user",text:input}]);setInput("");setRunning(true);setTimeout(()=>{setMessages(v=>[...v,{who:"agent",text:"已将补充要求加入任务，接下来会优先核验组织变化和当前招聘岗位。"}]);setRunning(false)},650)};return <section className="wbx-page wbx-agent"><aside><header><Bot/><b>Hunter Agent</b><button><Plus/></button></header><label><Search/><input placeholder="搜索任务"/></label><nav>{runs.map((r,i)=><button className={i===0?"active":""} key={r.title}><i className={`s${i}`}/><span><b>{r.title}</b><small>{r.type}</small></span><time>{r.time}</time></button>)}</nav><footer>4 个任务正在运行</footer></aside><main><header><div><small>公司调研 · 运行中</small><h1>调研智元新创</h1></div><nav><button onClick={()=>{setRunning(false);setToast("任务已停止")}}><Square/>停止</button><button onClick={()=>setToast("任务菜单已打开")}><MoreHorizontal/></button></nav></header><section className="wbx-thread">{messages.map((m,i)=><article className={m.who} key={`${m.text}-${i}`}><i>{m.who==="agent"?<Bot/>:<UserRound/>}</i><div><small>{m.who==="agent"?"Hunter Agent":"你"}</small><p>{m.text}</p>{m.who==="agent"&&i===1&&<section className="wbx-toolcards"><article><Search/><span><b>公开搜索</b><small>找到 18 个候选来源</small></span><Check/></article><article><FileCheck2/><span><b>来源核验</b><small>已确认 7 个有效来源</small></span><LoaderCircle className={running?"spin":""}/></article></section>}</div></article>)}{running&&<article className="agent"><i><LoaderCircle className="spin"/></i><div><small>Hunter Agent</small><p>正在继续阅读公开资料并整理公司结论…</p></div></article>}</section><footer><textarea value={input} onChange={e=>setInput(e.target.value)} onKeyDown={e=>{if(e.key==="Enter"&&!e.shiftKey){e.preventDefault();send()}}} placeholder="补充任务要求"/><button onClick={send}><Send/></button></footer></main><aside className="wbx-delivery"><header><small>RESULTS</small><h2>任务产物</h2></header>{[["公司资料草稿","已生成",FileText],["来源证据","7 条",FileCheck2],["相关岗位","12 个",CalendarDays]].map(([a,b,I],i)=><button key={a}><I/><span><b>{a}</b><small>{b}</small></span><ArrowRight/></button>)}<footer><button disabled={running} className="primary" onClick={()=>setToast("已打开公司草稿")}>查看结果</button></footer></aside><WToast text={toast} close={()=>setToast("")}/></section>}
-function List(){const [q,setQ]=useState("");const [status,setStatus]=useState(false);const [modal,setModal]=useState("");const [toast,setToast]=useState("");const shown=useMemo(()=>runs.filter(r=>`${r.title}${r.type}${r.status}`.includes(q)),[q]);return <section className="wbx-page wbx-list"><header><div><small>AGENT RUNS</small><h1>任务列表</h1></div><button className="primary" onClick={()=>setModal("new")}><Plus/>新建任务</button></header><div className="wbx-listbar"><label><Search/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="搜索任务名称或类型"/></label><div><button onClick={()=>setStatus(v=>!v)}>任务状态<ChevronDown/></button>{status&&<section className="wbx-menu" role="menu">{["运行中","等待确认","已完成","失败"].map(x=><button onClick={()=>{setToast(`已筛选：${x}`);setStatus(false)}} key={x}><i/><span>{x}</span></button>)}</section>}</div><button><CalendarDays/>过去 7 天</button></div><section className="wbx-runlist"><header><span>任务</span><span>类型</span><span>状态</span><span>运行时间</span><span>更新时间</span><span>操作</span></header>{shown.map((r,i)=><article key={r.title}><span><i className={`s${i}`}>{i===0?<LoaderCircle className="spin"/>:i===3?<CircleAlert/>:<Check/>}</i><b>{r.title}<small>agent-{i+1}2f8…</small></b></span><span>{r.type}</span><em>{r.status}</em><time>{i*8+6} 分钟</time><time>{r.time}</time><div><button onClick={()=>setToast(`已打开${r.title}`)}>详情</button><button onClick={()=>setModal("delete")}><Trash2/></button></div></article>)}</section><footer className="wbx-pages"><span>1–4 / 36</span><button disabled>上一页</button><button onClick={()=>setToast("已进入下一页")}>下一页</button></footer>{modal&&<WModal type={modal} close={()=>setModal("")} done={()=>{setToast(modal==="new"?"任务已启动":"任务已删除");setModal("")}}/>}<WToast text={toast} close={()=>setToast("")}/></section>}
-function Pipeline(){const [drag,setDrag]=useState("");const [note,setNote]=useState("");const [toast,setToast]=useState("");const columns=["Agent 发现","等待审核","已加入流程","客户推进","完成"];return <section className="wbx-page wbx-pipeline"><header><div><small>AUTOMATED SOURCING</small><h1>人才寻访工作流</h1></div><span><Bot/>Agent 正在补充 6 位候选人</span></header><div className="wbx-board">{columns.map((c,i)=><section onDragOver={e=>e.preventDefault()} onDrop={()=>{setToast(`${drag}已移动到${c}`);setDrag("")}} key={c}><header><b>{c}</b><em>{i+2}</em></header>{["赵星羽","陈松","周雨澄","林昊"].slice(i%4,i%4+1).map(n=><article draggable onDragStart={()=>setDrag(n)} key={n}><div><GripVertical/><span><b>{n}</b><small>具身智能方向</small></span></div><em>{[82,88,91,94][i%4]} 分</em><p>{i===0?"Agent 正在核验经历":i===1?"等待用户确认":"流程信息已同步"}</p><footer><span>{i===0?"自动发现":"于一凡"}</span><button onClick={()=>setNote(n)}><MessageSquareText/></button></footer></article>)}</section>)}</div>{note&&<div className="wbx-shade"><section className="wbx-modal"><header><h2>填写流程备注</h2></header><textarea defaultValue={`${note}：请 Agent 补充当前团队规模证据。`}/><footer><button onClick={()=>setNote("")}>取消</button><button className="primary" onClick={()=>{setToast("备注已保存");setNote("")}}>保存</button></footer></section></div>}<WToast text={toast} close={()=>setToast("")}/></section>}
-function Matching(){const [compare,setCompare]=useState([0,1]);const [toast,setToast]=useState("");const candidates=[{name:"林昊",score:94,role:"算法负责人"},{name:"周雨澄",score:88,role:"VLA 研究员"},{name:"陈松",score:83,role:"感知专家"}];return <section className="wbx-page wbx-matching"><header><div><small>GENERATED SHORTLIST</small><h1>Agent 推荐结果</h1></div><button className="primary" onClick={()=>setToast("已确认当前 shortlist")}>确认名单</button></header><div className="wbx-matchbar"><Bot/><p>Agent 从 126 条证据中筛选出 3 位候选人，已通过职级与岗位范围门禁。</p></div><main>{candidates.map((c,i)=><article className={compare.includes(i)?"selected":""} key={c.name}><header><button className="check" onClick={()=>setCompare(v=>v.includes(i)?v.filter(x=>x!==i):[...v,i])}>{compare.includes(i)&&<Check/>}</button><i>{c.name[0]}</i><span><h2>{c.name}</h2><p>{c.role}</p></span><strong>{c.score}</strong></header><section><div><span>关键技能</span><b>{["VLA · 团队管理","机器人学习 · 论文","感知 · 量产"][i]}</b></div><div><span>职级判断</span><b>{i===2?"有条件匹配":"适配"}</b></div><p>{i===0?"负责过完整模型与数据闭环，可直接承担岗位责任。":"方向匹配，建议进一步确认团队管理范围。"}</p></section><footer><button onClick={()=>setToast("已查看完整证据")}>证据</button><button onClick={()=>setToast("已加入岗位流程")}>加入流程</button></footer></article>)}</main><aside className="wbx-compare"><span>已选 {compare.length} 人</span><button disabled={compare.length<2} onClick={()=>setToast("已打开候选人对比")}>对比候选人</button></aside><WToast text={toast} close={()=>setToast("")}/></section>}
-function Cards(){const [tab,setTab]=useState("运行中");const [toast,setToast]=useState("");return <section className="wbx-page wbx-cards"><header><div><small>AGENT TASK CARDS</small><h1>任务空间</h1></div><nav>{["运行中","需处理","已完成"].map(x=><button className={tab===x?"active":""} onClick={()=>setTab(x)} key={x}>{x}</button>)}</nav></header><main>{runs.concat(runs.slice(0,2)).map((r,i)=><article key={`${r.title}-${i}`}><header><i className={`s${i%4}`}>{i%4===0?<LoaderCircle className="spin"/>:i%4===3?<CircleAlert/>:<Bot/>}</i><span><small>{r.type}</small><h2>{r.title}</h2></span><button onClick={()=>setToast("任务菜单已打开")}><MoreHorizontal/></button></header><p>{i%2?"任务结果等待用户确认后写入系统。":"Agent 正在收集和核验公开资料。"}</p><div><i><span style={{width:`${34+(i*13)%66}%`}}/></i><em>{34+(i*13)%66}%</em></div><footer><time>{r.time}</time><button onClick={()=>setToast(`已打开${r.title}`)}>查看任务<ArrowRight/></button></footer></article>)}</main><footer className="wbx-load"><button onClick={()=>setToast("已加载更多任务")}>加载更多</button></footer><WToast text={toast} close={()=>setToast("")}/></section>}
-function UploadPage(){const [phase,setPhase]=useState(0);const [toast,setToast]=useState("");const begin=()=>{setPhase(1);setTimeout(()=>setPhase(2),650);setTimeout(()=>setPhase(3),1100)};return <section className="wbx-page wbx-upload"><header><div><small>LAUNCH AGENT TASK</small><h1>从资料启动任务</h1></div></header><main><section><h2>任务输入</h2><button className="wbx-source"><FileText/><span><b>上传文件</b><small>简历、JD、公司资料</small></span><Upload/></button><button className="wbx-source"><Search/><span><b>提供公开链接</b><small>个人主页、公司网站</small></span><ArrowRight/></button><label>补充任务要求<textarea defaultValue="识别材料中的候选人，并补全其公开资料。"/></label><button className="primary" onClick={begin}>启动 Agent</button></section><aside><h2>任务准备</h2>{[["输入校验","文件与目标完整"],["工作区创建","隔离目录"],["Agent 运行","可观察与恢复"]].map(([a,b],i)=><article className={phase>i?"done":phase===i&&phase>0?"running":""} key={a}><i>{phase>i?<Check/>:phase===i&&phase>0?<LoaderCircle className="spin"/>:i+1}</i><span><b>{a}</b><small>{b}</small></span></article>)}{phase===3&&<button onClick={()=>setToast("已打开 Agent 任务")}>进入任务详情<ArrowRight/></button>}</aside></main><WToast text={toast} close={()=>setToast("")}/></section>}
-function Tasks(){const [active,setActive]=useState(0);const [status,setStatus]=useState("运行中");const [toast,setToast]=useState("");return <section className="wbx-page wbx-tasks"><aside><small>RUN HISTORY</small><h1>长任务进度</h1>{runs.map((r,i)=><button className={active===i?"active":""} onClick={()=>{setActive(i);setStatus(r.status)}} key={r.title}><i className={`s${i}`}/><span><b>{r.title}</b><small>{r.status}</small></span></button>)}</aside><main><header><div><small>{runs[active].type}</small><h2>{runs[active].title}</h2></div><nav><button onClick={()=>{setStatus(status==="运行中"?"已暂停":"运行中");setToast("任务状态已更新")}}>{status==="运行中"?<><Pause/>暂停</>:<><Play/>继续</>}</button><button onClick={()=>setToast("已重新执行失败步骤")}><RefreshCw/>重试</button></nav></header><section className="wbx-progress-head"><strong>{status}</strong><span><i style={{width:`${active===2?"100":"68"}%`}}/></span><em>{active===2?100:68}%</em></section><div className="wbx-timeline">{[["任务进入队列","已完成"],["制定执行计划","已完成"],["搜索和阅读公开资料",status],["核验交付结果","等待"],["生成业务草稿","等待"]].map(([a,b],i)=><article key={a}><i>{i<2?<Check/>:i===2&&status==="运行中"?<LoaderCircle className="spin"/>:i===2&&status==="已暂停"?<Pause/>:<Clock3/>}</i><span><b>{a}</b><small>{b}</small>{i===2&&<p>已处理 7 / 18 个来源，任务可在中断后从当前位置继续。</p>}</span><time>{i<2?`${12-i*5} 分钟前`:""}</time></article>)}</div><footer><button onClick={()=>setToast("已打开完整运行过程")}><History/>查看完整过程</button></footer></main><WToast text={toast} close={()=>setToast("")}/></section>}
-const pages={agent:Agent,list:List,pipeline:Pipeline,matching:Matching,cards:Cards,upload:UploadPage,tasks:Tasks};export function WorkBuddyExperience({view}){const Page=pages[view];return Page?<Page/>:<div className="fatal-state">页面不存在。</div>}
+import { candidates as candidateRows, papers } from "../data/boards";
+import {
+  ArrowRight,
+  Bot,
+  CalendarDays,
+  Check,
+  ChevronDown,
+  CircleAlert,
+  Clock3,
+  FileCheck2,
+  FileText,
+  GripVertical,
+  History,
+  LoaderCircle,
+  MessageSquareText,
+  MoreHorizontal,
+  Pause,
+  Play,
+  Plus,
+  RefreshCw,
+  Search,
+  Send,
+  Square,
+  Trash2,
+  Upload,
+  UserRound,
+  X,
+} from "lucide-react";
+const runs = [
+  { title: "调研智元新创", type: "公司调研", status: "运行中", time: "06:42" },
+  {
+    title: "补全林昊公开资料",
+    type: "信息补全",
+    status: "等待确认",
+    time: "今天",
+  },
+  {
+    title: "解析自动驾驶岗位",
+    type: "岗位解析",
+    status: "已完成",
+    time: "昨天",
+  },
+  {
+    title: "搜索具身智能论文",
+    type: "学术搜索",
+    status: "失败",
+    time: "2 天前",
+  },
+];
+function WToast({ text, close }) {
+  return text ? (
+    <div className="wbx-toast">
+      <Check />
+      <span>{text}</span>
+      <button onClick={close}>
+        <X />
+      </button>
+    </div>
+  ) : null;
+}
+function WModal({ type, close, done }) {
+  return (
+    <div className="wbx-shade">
+      <section className="wbx-modal" role="dialog">
+        <header>
+          <UserRound />
+          <div>
+            <small>CANDIDATE PROFILE</small>
+            <h2>{type === "new" ? "新建候选人" : "删除候选人"}</h2>
+          </div>
+        </header>
+        {type === "new" ? (
+          <>
+            <label>
+              姓名
+              <div>
+                <button className="active">赵星羽</button>
+                <button>待确认</button>
+              </div>
+            </label>
+            <label>
+              当前公司与职位
+              <textarea defaultValue="远川智能 · 机器人平台架构师" />
+            </label>
+          </>
+        ) : (
+          <p>候选人资料和未结束的关联记录将一并删除且无法恢复。</p>
+        )}
+        <footer>
+          <button onClick={close}>取消</button>
+          <button
+            className={type === "new" ? "primary" : "danger"}
+            onClick={done}
+          >
+            {type === "new" ? "创建候选人" : "确认删除"}
+          </button>
+        </footer>
+      </section>
+    </div>
+  );
+}
+function Agent() {
+  const [messages, setMessages] = useState([
+    { who: "user", text: "调研智元新创，重点看具身智能团队和招聘情况。" },
+    {
+      who: "agent",
+      text: "已制定调研范围。我会搜索公司、团队、岗位和公开访谈，并核验关键结论。",
+    },
+  ]);
+  const [input, setInput] = useState("");
+  const [running, setRunning] = useState(true);
+  const [toast, setToast] = useState("");
+  const send = () => {
+    if (!input.trim()) return;
+    setMessages((v) => [...v, { who: "user", text: input }]);
+    setInput("");
+    setRunning(true);
+    setTimeout(() => {
+      setMessages((v) => [
+        ...v,
+        {
+          who: "agent",
+          text: "已将补充要求加入任务，接下来会优先核验组织变化和当前招聘岗位。",
+        },
+      ]);
+      setRunning(false);
+    }, 650);
+  };
+  return (
+    <section className="wbx-page wbx-agent">
+      <aside>
+        <header>
+          <Bot />
+          <b>Hunter Agent</b>
+          <button>
+            <Plus />
+          </button>
+        </header>
+        <label>
+          <Search />
+          <input placeholder="搜索任务" />
+        </label>
+        <nav>
+          {runs.map((r, i) => (
+            <button className={i === 0 ? "active" : ""} key={r.title}>
+              <i className={`s${i}`} />
+              <span>
+                <b>{r.title}</b>
+                <small>{r.type}</small>
+              </span>
+              <time>{r.time}</time>
+            </button>
+          ))}
+        </nav>
+        <footer>4 个任务正在运行</footer>
+      </aside>
+      <main>
+        <header>
+          <div>
+            <small>公司调研 · 运行中</small>
+            <h1>调研智元新创</h1>
+          </div>
+          <nav>
+            <button
+              onClick={() => {
+                setRunning(false);
+                setToast("任务已停止");
+              }}
+            >
+              <Square />
+              停止
+            </button>
+            <button onClick={() => setToast("任务菜单已打开")}>
+              <MoreHorizontal />
+            </button>
+          </nav>
+        </header>
+        <section className="wbx-thread">
+          {messages.map((m, i) => (
+            <article className={m.who} key={`${m.text}-${i}`}>
+              <i>{m.who === "agent" ? <Bot /> : <UserRound />}</i>
+              <div>
+                <small>{m.who === "agent" ? "Hunter Agent" : "你"}</small>
+                <p>{m.text}</p>
+                {m.who === "agent" && i === 1 && (
+                  <section className="wbx-toolcards">
+                    <article>
+                      <Search />
+                      <span>
+                        <b>公开搜索</b>
+                        <small>找到 18 个候选来源</small>
+                      </span>
+                      <Check />
+                    </article>
+                    <article>
+                      <FileCheck2 />
+                      <span>
+                        <b>来源核验</b>
+                        <small>已确认 7 个有效来源</small>
+                      </span>
+                      <LoaderCircle className={running ? "spin" : ""} />
+                    </article>
+                  </section>
+                )}
+              </div>
+            </article>
+          ))}
+          {running && (
+            <article className="agent">
+              <i>
+                <LoaderCircle className="spin" />
+              </i>
+              <div>
+                <small>Hunter Agent</small>
+                <p>正在继续阅读公开资料并整理公司结论…</p>
+              </div>
+            </article>
+          )}
+        </section>
+        <footer>
+          <textarea
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                send();
+              }
+            }}
+            placeholder="补充任务要求"
+          />
+          <button onClick={send}>
+            <Send />
+          </button>
+        </footer>
+      </main>
+      <aside className="wbx-delivery">
+        <header>
+          <small>RESULTS</small>
+          <h2>任务产物</h2>
+        </header>
+        {[
+          ["公司资料草稿", "已生成", FileText],
+          ["来源证据", "7 条", FileCheck2],
+          ["相关岗位", "12 个", CalendarDays],
+        ].map(([a, b, I], i) => (
+          <button key={a}>
+            <I />
+            <span>
+              <b>{a}</b>
+              <small>{b}</small>
+            </span>
+            <ArrowRight />
+          </button>
+        ))}
+        <footer>
+          <button
+            disabled={running}
+            className="primary"
+            onClick={() => setToast("已打开公司草稿")}
+          >
+            查看结果
+          </button>
+        </footer>
+      </aside>
+      <WToast text={toast} close={() => setToast("")} />
+    </section>
+  );
+}
+function List() {
+  const [q, setQ] = useState("");
+  const [status, setStatus] = useState("");
+  const [pipeline, setPipeline] = useState("全部");
+  const [locations, setLocations] = useState(["上海"]);
+  const [industry, setIndustry] = useState("人工智能 / 机器人");
+  const [dateRange, setDateRange] = useState("过去 7 天");
+  const [modal, setModal] = useState("");
+  const [toast, setToast] = useState("");
+  const shown = useMemo(
+    () =>
+      candidateRows.filter((candidate) =>
+        `${candidate.name}${candidate.role}${candidate.company}${candidate.city}`.includes(
+          q,
+        ),
+      ),
+    [q],
+  );
+  return (
+    <section className="wbx-page wbx-list">
+      <header>
+        <div>
+          <small>TALENT RECORDS</small>
+          <h1>候选人管理</h1>
+        </div>
+        <button className="primary" onClick={() => setModal("new")}>
+          <Plus />
+          新建候选人
+        </button>
+      </header>
+      <div className="wbx-listbar">
+        <label>
+          <Search />
+          <input
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder="搜索姓名、手机号、公司、职位、技能或经历"
+          />
+        </label>
+        <div>
+          <button
+            onClick={() => setStatus(status === "pipeline" ? "" : "pipeline")}
+          >
+            {pipeline === "全部" ? "流程状态" : pipeline}
+            <ChevronDown />
+          </button>
+          {status === "pipeline" && (
+            <section className="wbx-menu" role="menu">
+              {["全部", "在流程中", "不在流程中"].map((x) => (
+                <button
+                  role="menuitemradio"
+                  aria-checked={pipeline === x}
+                  onClick={() => {
+                    setPipeline(x);
+                    setStatus("");
+                  }}
+                  key={x}
+                >
+                  <i className={pipeline === x ? "active" : ""}>
+                    {pipeline === x && <Check />}
+                  </i>
+                  <span>{x}</span>
+                </button>
+              ))}
+            </section>
+          )}
+        </div>
+        <div>
+          <button
+            onClick={() => setStatus(status === "location" ? "" : "location")}
+          >
+            地点 · {locations.length}
+            <ChevronDown />
+          </button>
+          {status === "location" && (
+            <section className="wbx-menu wbx-multi" role="menu">
+              {["上海", "北京", "深圳", "杭州"].map((item) => (
+                <button
+                  role="menuitemcheckbox"
+                  aria-checked={locations.includes(item)}
+                  onClick={() =>
+                    setLocations((values) =>
+                      values.includes(item)
+                        ? values.filter((value) => value !== item)
+                        : [...values, item],
+                    )
+                  }
+                  key={item}
+                >
+                  <i className={locations.includes(item) ? "active" : ""}>
+                    {locations.includes(item) && <Check />}
+                  </i>
+                  <span>{item}</span>
+                </button>
+              ))}
+              <footer>
+                <button onClick={() => setLocations([])}>清空</button>
+                <button onClick={() => setStatus("")}>完成</button>
+              </footer>
+            </section>
+          )}
+        </div>
+        <div>
+          <button
+            onClick={() => setStatus(status === "industry" ? "" : "industry")}
+          >
+            行业
+            <ChevronDown />
+          </button>
+          {status === "industry" && (
+            <section className="wbx-industry" role="menu">
+              <nav>
+                {["人工智能", "汽车", "先进制造"].map((item) => (
+                  <button
+                    className={industry.startsWith(item) ? "active" : ""}
+                    key={item}
+                  >
+                    {item}
+                  </button>
+                ))}
+              </nav>
+              <div>
+                {[
+                  "人工智能 / 机器人",
+                  "人工智能 / 大模型",
+                  "人工智能 / 自动驾驶",
+                ].map((item) => (
+                  <button
+                    className={industry === item ? "active" : ""}
+                    onClick={() => {
+                      setIndustry(item);
+                      setStatus("");
+                    }}
+                    key={item}
+                  >
+                    {item.split(" / ")[1]}
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+        <div>
+          <button onClick={() => setStatus(status === "date" ? "" : "date")}>
+            <CalendarDays />
+            {dateRange}
+            <ChevronDown />
+          </button>
+          {status === "date" && (
+            <section className="wbx-menu wbx-date" role="menu">
+              {["过去 7 天", "过去 30 天", "自定义"].map((item) => (
+                <button
+                  className={dateRange === item ? "active" : ""}
+                  onClick={() => setDateRange(item)}
+                  key={item}
+                >
+                  {item}
+                </button>
+              ))}
+              {dateRange === "自定义" && (
+                <div>
+                  <button>2026-07-01</button>
+                  <span>至</span>
+                  <button>2026-08-07</button>
+                </div>
+              )}
+              <footer>
+                <button onClick={() => setStatus("")}>应用日期</button>
+              </footer>
+            </section>
+          )}
+        </div>
+      </div>
+      <section className="wbx-runlist">
+        <header>
+          <span>候选人</span>
+          <span>当前职位</span>
+          <span>公司</span>
+          <span>地点 / 学历</span>
+          <span>流程</span>
+          <span>更新时间</span>
+          <span>操作</span>
+        </header>
+        {shown.map((candidate) => (
+          <article key={candidate.name}>
+            <span>
+              <i>{candidate.name[0]}</i>
+              <b>
+                {candidate.name}
+                <small>{candidate.opportunity}</small>
+              </b>
+            </span>
+            <span>{candidate.role}</span>
+            <span>{candidate.company}</span>
+            <span>
+              {candidate.city} · {candidate.education}
+            </span>
+            <em>{candidate.stage}</em>
+            <time>{candidate.updated}</time>
+            <div>
+              <button onClick={() => setToast(`已打开${candidate.name}`)}>
+                查看
+              </button>
+              <button onClick={() => setModal("delete")}>
+                <Trash2 />
+              </button>
+            </div>
+          </article>
+        ))}
+      </section>
+      <footer className="wbx-pages">
+        <span>1–4 / 48</span>
+        <button disabled>上一页</button>
+        <button onClick={() => setToast("已进入下一页")}>下一页</button>
+      </footer>
+      {modal && (
+        <WModal
+          type={modal}
+          close={() => setModal("")}
+          done={() => {
+            setToast(modal === "new" ? "候选人已创建" : "候选人已删除");
+            setModal("");
+          }}
+        />
+      )}
+      <WToast text={toast} close={() => setToast("")} />
+    </section>
+  );
+}
+function Pipeline() {
+  const [drag, setDrag] = useState("");
+  const [note, setNote] = useState("");
+  const [toast, setToast] = useState("");
+  const columns = ["储备", "进行中", "成功", "失败"];
+  return (
+    <section className="wbx-page wbx-pipeline">
+      <header>
+        <div>
+          <small>AUTOMATED SOURCING</small>
+          <h1>人才寻访工作流</h1>
+        </div>
+        <span>
+          <Bot />
+          Agent 正在补充 6 位候选人
+        </span>
+      </header>
+      <div className="wbx-board">
+        {columns.map((c, i) => (
+          <section
+            data-lane-kind={["reserve", "progress", "success", "failure"][i]}
+            onDragOver={(e) => e.preventDefault()}
+            onDrop={() => {
+              setToast(`${drag}已移动到${c}`);
+              setDrag("");
+            }}
+            key={c}
+          >
+            <header>
+              <b>{c}</b>
+              <em>{i + 2}</em>
+            </header>
+            {["赵星羽", "陈松", "周雨澄", "林昊"]
+              .slice(i % 4, (i % 4) + 1)
+              .map((n) => (
+                <article draggable onDragStart={() => setDrag(n)} key={n}>
+                  <div>
+                    <GripVertical />
+                    <span>
+                      <b>{n}</b>
+                      <small>具身智能方向</small>
+                    </span>
+                  </div>
+                  <em>{[82, 88, 91, 94][i % 4]} 分</em>
+                  <p>
+                    {i === 0
+                      ? "Agent 正在核验经历"
+                      : i === 1
+                        ? "等待用户确认"
+                        : "流程信息已同步"}
+                  </p>
+                  <footer>
+                    <span>{i === 0 ? "自动发现" : "于一凡"}</span>
+                    <button onClick={() => setNote(n)}>
+                      <MessageSquareText />
+                    </button>
+                  </footer>
+                </article>
+              ))}
+          </section>
+        ))}
+      </div>
+      {note && (
+        <div className="wbx-shade">
+          <section className="wbx-modal">
+            <header>
+              <h2>填写流程备注</h2>
+            </header>
+            <textarea
+              defaultValue={`${note}：请 Agent 补充当前团队规模证据。`}
+            />
+            <footer>
+              <button onClick={() => setNote("")}>取消</button>
+              <button
+                className="primary"
+                onClick={() => {
+                  setToast("备注已保存");
+                  setNote("");
+                }}
+              >
+                保存
+              </button>
+            </footer>
+          </section>
+        </div>
+      )}
+      <WToast text={toast} close={() => setToast("")} />
+    </section>
+  );
+}
+function Matching() {
+  const [compare, setCompare] = useState([0, 1]);
+  const [toast, setToast] = useState("");
+  const candidates = [
+    { name: "林昊", score: 94, role: "算法负责人" },
+    { name: "周雨澄", score: 88, role: "VLA 研究员" },
+    { name: "陈松", score: 83, role: "感知专家" },
+  ];
+  return (
+    <section className="wbx-page wbx-matching">
+      <header>
+        <div>
+          <small>GENERATED SHORTLIST</small>
+          <h1>Agent 推荐结果</h1>
+        </div>
+        <button
+          className="primary"
+          onClick={() => setToast("已确认当前 shortlist")}
+        >
+          确认名单
+        </button>
+      </header>
+      <div className="wbx-matchbar">
+        <Bot />
+        <p>
+          Agent 从 126 条证据中筛选出 3 位候选人，已通过职级与岗位范围门禁。
+        </p>
+      </div>
+      <main>
+        {candidates.map((c, i) => (
+          <article
+            className={compare.includes(i) ? "selected" : ""}
+            key={c.name}
+          >
+            <header>
+              <button
+                className="check"
+                onClick={() =>
+                  setCompare((v) =>
+                    v.includes(i) ? v.filter((x) => x !== i) : [...v, i],
+                  )
+                }
+              >
+                {compare.includes(i) && <Check />}
+              </button>
+              <i>{c.name[0]}</i>
+              <span>
+                <h2>{c.name}</h2>
+                <p>{c.role}</p>
+              </span>
+              <strong>{c.score}</strong>
+            </header>
+            <section>
+              <div>
+                <span>关键技能</span>
+                <b>
+                  {["VLA · 团队管理", "机器人学习 · 论文", "感知 · 量产"][i]}
+                </b>
+              </div>
+              <div>
+                <span>职级判断</span>
+                <b>{i === 2 ? "有条件匹配" : "适配"}</b>
+              </div>
+              <p>
+                {i === 0
+                  ? "负责过完整模型与数据闭环，可直接承担岗位责任。"
+                  : "方向匹配，建议进一步确认团队管理范围。"}
+              </p>
+            </section>
+            <footer>
+              <button onClick={() => setToast("已查看完整证据")}>证据</button>
+              <button onClick={() => setToast("已加入岗位流程")}>
+                加入流程
+              </button>
+            </footer>
+          </article>
+        ))}
+      </main>
+      <aside className="wbx-compare">
+        <span>已选 {compare.length} 人</span>
+        <button
+          disabled={compare.length < 2}
+          onClick={() => setToast("已打开候选人对比")}
+        >
+          对比候选人
+        </button>
+      </aside>
+      <WToast text={toast} close={() => setToast("")} />
+    </section>
+  );
+}
+function Cards() {
+  const [tab, setTab] = useState("全部");
+  const [toast, setToast] = useState("");
+  return (
+    <section className="wbx-page wbx-cards">
+      <header>
+        <div>
+          <small>ACADEMIC RESULT SPACE</small>
+          <h1>论文搜索结果</h1>
+        </div>
+        <nav>
+          {["全部", "强烈建议", "已导入"].map((x) => (
+            <button
+              className={tab === x ? "active" : ""}
+              onClick={() => setTab(x)}
+              key={x}
+            >
+              {x}
+            </button>
+          ))}
+        </nav>
+      </header>
+      <main>
+        {papers.map((paper, i) => (
+          <article key={paper.title}>
+            <header>
+              <i className={`s${i % 4}`}>
+                <FileText />
+              </i>
+              <span>
+                <small>
+                  {paper.source} · {paper.year}
+                </small>
+                <h2>{paper.title}</h2>
+              </span>
+              <button
+                aria-label="论文操作"
+                onClick={() => setToast("论文菜单已打开")}
+              >
+                <MoreHorizontal />
+              </button>
+            </header>
+            <p>{paper.abstract}</p>
+            <div>
+              <i>
+                <span style={{ width: `${Math.min(100, 58 + i * 11)}%` }} />
+              </i>
+              <em>{paper.tier}</em>
+            </div>
+            <footer>
+              <time>{paper.authors}</time>
+              <button onClick={() => setToast("已打开论文详情")}>
+                查看论文
+                <ArrowRight />
+              </button>
+            </footer>
+          </article>
+        ))}
+      </main>
+      <footer className="wbx-load">
+        <button onClick={() => setToast("已加载更多论文")}>加载更多</button>
+      </footer>
+      <WToast text={toast} close={() => setToast("")} />
+    </section>
+  );
+}
+function UploadPage() {
+  const [phase, setPhase] = useState(0);
+  const [toast, setToast] = useState("");
+  const begin = () => {
+    setPhase(1);
+    setTimeout(() => setPhase(2), 650);
+    setTimeout(() => setPhase(3), 1100);
+  };
+  return (
+    <section className="wbx-page wbx-upload">
+      <header>
+        <div>
+          <small>LAUNCH AGENT TASK</small>
+          <h1>从资料启动任务</h1>
+        </div>
+      </header>
+      <main>
+        <section>
+          <h2>任务输入</h2>
+          <button className="wbx-source">
+            <FileText />
+            <span>
+              <b>上传文件</b>
+              <small>简历、JD、公司资料</small>
+            </span>
+            <Upload />
+          </button>
+          <button className="wbx-source">
+            <Search />
+            <span>
+              <b>提供公开链接</b>
+              <small>个人主页、公司网站</small>
+            </span>
+            <ArrowRight />
+          </button>
+          <label>
+            补充任务要求
+            <textarea defaultValue="识别材料中的候选人，并补全其公开资料。" />
+          </label>
+          <button className="primary" onClick={begin}>
+            启动 Agent
+          </button>
+        </section>
+        <aside>
+          <h2>任务准备</h2>
+          {[
+            ["输入校验", "文件与目标完整"],
+            ["工作区创建", "隔离目录"],
+            ["Agent 运行", "可观察与恢复"],
+          ].map(([a, b], i) => (
+            <article
+              className={
+                phase > i ? "done" : phase === i && phase > 0 ? "running" : ""
+              }
+              key={a}
+            >
+              <i>
+                {phase > i ? (
+                  <Check />
+                ) : phase === i && phase > 0 ? (
+                  <LoaderCircle className="spin" />
+                ) : (
+                  i + 1
+                )}
+              </i>
+              <span>
+                <b>{a}</b>
+                <small>{b}</small>
+              </span>
+            </article>
+          ))}
+          {phase === 3 && (
+            <button onClick={() => setToast("已打开 Agent 任务")}>
+              进入任务详情
+              <ArrowRight />
+            </button>
+          )}
+        </aside>
+      </main>
+      <WToast text={toast} close={() => setToast("")} />
+    </section>
+  );
+}
+function Tasks() {
+  const [active, setActive] = useState(0);
+  const [status, setStatus] = useState("运行中");
+  const [toast, setToast] = useState("");
+  return (
+    <section className="wbx-page wbx-tasks">
+      <aside>
+        <small>RUN HISTORY</small>
+        <h1>长任务进度</h1>
+        {runs.map((r, i) => (
+          <button
+            className={active === i ? "active" : ""}
+            onClick={() => {
+              setActive(i);
+              setStatus(r.status);
+            }}
+            key={r.title}
+          >
+            <i className={`s${i}`} />
+            <span>
+              <b>{r.title}</b>
+              <small>{r.status}</small>
+            </span>
+          </button>
+        ))}
+      </aside>
+      <main>
+        <header>
+          <div>
+            <small>{runs[active].type}</small>
+            <h2>{runs[active].title}</h2>
+          </div>
+          <nav>
+            <button
+              onClick={() => {
+                setStatus(status === "运行中" ? "已暂停" : "运行中");
+                setToast("任务状态已更新");
+              }}
+            >
+              {status === "运行中" ? (
+                <>
+                  <Pause />
+                  暂停
+                </>
+              ) : (
+                <>
+                  <Play />
+                  继续
+                </>
+              )}
+            </button>
+            <button onClick={() => setToast("已重新执行失败步骤")}>
+              <RefreshCw />
+              重试
+            </button>
+          </nav>
+        </header>
+        <section className="wbx-progress-head">
+          <strong>{status}</strong>
+          <span>
+            <i style={{ width: `${active === 2 ? "100" : "68"}%` }} />
+          </span>
+          <em>{active === 2 ? 100 : 68}%</em>
+        </section>
+        <div className="wbx-timeline">
+          {[
+            ["任务进入队列", "已完成"],
+            ["制定执行计划", "已完成"],
+            ["搜索和阅读公开资料", status],
+            ["核验交付结果", "等待"],
+            ["生成业务草稿", "等待"],
+          ].map(([a, b], i) => (
+            <article key={a}>
+              <i>
+                {i < 2 ? (
+                  <Check />
+                ) : i === 2 && status === "运行中" ? (
+                  <LoaderCircle className="spin" />
+                ) : i === 2 && status === "已暂停" ? (
+                  <Pause />
+                ) : (
+                  <Clock3 />
+                )}
+              </i>
+              <span>
+                <b>{a}</b>
+                <small>{b}</small>
+                {i === 2 && (
+                  <p>已处理 7 / 18 个来源，任务可在中断后从当前位置继续。</p>
+                )}
+              </span>
+              <time>{i < 2 ? `${12 - i * 5} 分钟前` : ""}</time>
+            </article>
+          ))}
+        </div>
+        <footer>
+          <button onClick={() => setToast("已打开完整运行过程")}>
+            <History />
+            查看完整过程
+          </button>
+        </footer>
+      </main>
+      <WToast text={toast} close={() => setToast("")} />
+    </section>
+  );
+}
+const pages = {
+  agent: Agent,
+  list: List,
+  pipeline: Pipeline,
+  matching: Matching,
+  cards: Cards,
+  upload: UploadPage,
+  tasks: Tasks,
+};
+export function WorkBuddyExperience({ view }) {
+  const Page = pages[view];
+  return Page ? <Page /> : <div className="fatal-state">页面不存在。</div>;
+}
