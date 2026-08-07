@@ -187,6 +187,28 @@
   background: var(--accent);
 }
 
+.theme-command-center .signal-focus article footer button {
+  border-color: color-mix(in srgb, var(--on-nav) 30%, transparent);
+  background: color-mix(in srgb, var(--on-nav) 7%, transparent);
+  color: color-mix(in srgb, var(--on-nav) 88%, transparent);
+}
+
+.theme-command-center .signal-focus article footer button:hover {
+  border-color: color-mix(in srgb, var(--on-nav) 48%, transparent);
+  background: color-mix(in srgb, var(--on-nav) 13%, transparent);
+}
+
+.theme-command-center .signal-focus article footer button:last-child {
+  border-color: var(--accent);
+  color: color-mix(in srgb, var(--nav) 94%, transparent);
+}
+
+.theme-command-center .signal-focus article footer button:last-child:hover {
+  border-color: var(--focus);
+  background: var(--focus);
+  color: var(--on-nav);
+}
+
 .theme-command-center .signal-pulse-chart i:nth-child(3n) {
   background: var(--signal);
 }

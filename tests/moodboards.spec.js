@@ -402,6 +402,17 @@ test("all card-list pages use Hunter academic-paper results instead of invented 
 });
 
 test("named visual regressions stay removed", async ({ page }) => {
+  await page.goto(route("command-center", "main", "light"));
+  const signalActions = page.locator(".signal-focus article footer button");
+  await expect(signalActions.last()).toHaveCSS(
+    "background-color",
+    "rgb(40, 134, 222)",
+  );
+  await expect(signalActions.last()).toHaveCSS(
+    "border-top-color",
+    "rgb(40, 134, 222)",
+  );
+
   await page.goto(route("command-center", "list", "light"));
   await expect(page.getByRole("button", { name: "新建候选人" })).toHaveCSS(
     "background-color",
