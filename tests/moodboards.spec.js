@@ -412,6 +412,7 @@ test("named visual regressions stay removed", async ({ page }) => {
     "border-top-color",
     "rgb(40, 134, 222)",
   );
+  await expect(signalActions.last()).toHaveCSS("color", "rgb(255, 255, 255)");
 
   await page.goto(route("command-center", "list", "light"));
   await expect(page.getByRole("button", { name: "新建候选人" })).toHaveCSS(

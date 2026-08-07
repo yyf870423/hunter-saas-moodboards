@@ -200,7 +200,7 @@
 
 .theme-command-center .signal-focus article footer button:last-child {
   border-color: var(--accent);
-  color: color-mix(in srgb, var(--nav) 94%, transparent);
+  color: var(--on-nav);
 }
 
 .theme-command-center .signal-focus article footer button:last-child:hover {
