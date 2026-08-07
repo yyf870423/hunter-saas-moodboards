@@ -209,6 +209,15 @@
   color: var(--on-nav);
 }
 
+.theme-command-center :is(
+  .cmdx-page button.primary,
+  .cmdx-dialog-fields button.active,
+  .cmdx-conversation > footer > button,
+  .cmdx-cards > header nav button.active
+) {
+  color: var(--on-nav);
+}
+
 .theme-command-center .signal-pulse-chart i:nth-child(3n) {
   background: var(--signal);
 }

@@ -464,6 +464,34 @@ test("named visual regressions stay removed", async ({ page }) => {
   ).not.toHaveCSS("color", "rgb(26, 26, 26)");
 });
 
+test("command-center blue action buttons use white labels before hover", async ({
+  page,
+}) => {
+  for (const view of allViews) {
+    await page.goto(route("command-center", view, "light"));
+    const nonWhiteBlueActions = await page.locator("button").evaluateAll(
+      (buttons) =>
+        buttons
+          .map((button) => {
+            const style = getComputedStyle(button);
+            return {
+              label: button.textContent.trim().replace(/\s+/g, " "),
+              background: style.backgroundColor,
+              color: style.color,
+            };
+          })
+          .filter(
+            (button) =>
+              button.background === "rgb(40, 134, 222)" &&
+              button.color !== "rgb(255, 255, 255)",
+          ),
+    );
+    expect(nonWhiteBlueActions, `${view} contains dark blue-button labels`).toEqual(
+      [],
+    );
+  }
+});
+
 for (const board of boards) {
   test(`${board.slug} theme switch persists across pages without losing page state`, async ({
     page,
